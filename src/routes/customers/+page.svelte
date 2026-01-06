@@ -4,7 +4,9 @@
   import { clientes } from '$lib/stores/clientes';
   import type { Cliente } from '$lib/types/clientes';
   import { dark, modalOpen, closeModal, handleModalKeyDown, clienteEdit, closeEditModal, openEditModal, modalEditOpen,
-    modalDeleteOpen, clienteDelete, openDeleteModal, closeDeleteModal
+    modalDeleteOpen, clienteDelete, openDeleteModal, closeDeleteModal,
+    openVehiculosModal, closeVehiculosModal, modalVehiculosOpen, clienteVehiculos,
+    openTarjetasModal, closeTarjetasModal, modalTarjetasOpen, clienteTarjetas
    } from "$lib/stores/theme";
   export let cliente;
   
@@ -172,8 +174,67 @@
                   <td class="px-6 py-4">{cliente.direccion}</td>
                   <td class="px-6 py-4">{cliente.telefono}</td>
                   <td class="px-6 py-4">{cliente.grupo}</td>
-                  <td class="px-6 py-4">{cliente.tarjetas}</td>
-                  <td class="px-6 py-4">{cliente.vehiculos}</td>
+                  <td class="px-6 py-4">
+                    <button
+                      on:click={() => openTarjetasModal(cliente)}
+                      aria-label="Ver tarjetas del cliente"
+                      class={`
+                        z-50 flex h-11 w-11 items-center justify-center rounded-lg
+                        border
+                        ${$dark
+                          ? 'text-gray-400 border-gray-800 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-500 border-gray-200 hover:bg-gray-100 hover:gray-700'
+                        }
+                      `}>
+                      <div class="flex items-center gap-2 px-2">
+                        <!-- Icono tarjeta -->
+                        <div class="w-10 h-10 flex items-center justify-center shrink-0">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-4 h-4"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M2.25 8.25h19.5M3 6.75h18A1.5 1.5 0 0 1 22.5 8.25v7.5A1.5 1.5 0 0 1 21 17.25H3A1.5 1.5 0 0 1 1.5 15.75v-7.5A1.5 1.5 0 0 1 3 6.75Zm3 6h3"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                  </td>
+                  <td class="px-6 py-4">
+                    <button
+                      on:click={() => openVehiculosModal(cliente)}
+                      aria-label="Ver vehículos del cliente"
+                      class={`
+                        z-50 flex h-11 w-11 items-center justify-center rounded-lg
+                        border
+                        ${$dark
+                          ? 'text-gray-400 border-gray-800 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-500 border-gray-200 hover:bg-gray-100 hover:gray-700'
+                        }
+                      `}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="block w-5 h-5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8.25 18.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM3 16.5V14.25c0-.621.504-1.125 1.125-1.125h.45l1.5-4.125A1.875 1.875 0 0 1 7.837 7.5h8.326c.78 0 1.48.48 1.762 1.213l1.5 4.125h.45c.621 0 1.125.504 1.125 1.125V16.5m-18 0h18"
+                      />
+                    </svg>
+                    </button>
+                  </td>
                   <td class="px-6 py-4 text-sm">
                   <button
                     aria-label="Editar cliente"
@@ -631,6 +692,184 @@
       </form>
 
     {/if}
+    {#if $modalVehiculosOpen && $clienteVehiculos}
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div
+          class={`w-full max-w-sm rounded-xl p-6 shadow-xl border
+            ${$dark
+              ? 'bg-gray-800 border-gray-700 text-gray-200'
+              : 'bg-white border-gray-200 text-gray-700'}
+          `}
+        >
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold">
+              Vehículos del cliente
+            </h3>
+            <button
+              on:click={closeVehiculosModal}
+              aria-label="Cerrar"
+              class={`rounded-md p-1
+                ${$dark
+                  ? 'hover:bg-gray-700'
+                  : 'hover:bg-gray-100'}
+              `}
+            >
+              ✕
+            </button>
+          </div>
+
+          <p class="text-sm mb-6">
+            Cliente: <strong>{$clienteVehiculos.razonSocial}</strong>
+          </p>
+          <div class="overflow-x-auto">
+            <table
+              class={`min-w-full text-sm border rounded-lg
+                ${$dark
+                  ? 'border-gray-700 text-gray-200'
+                  : 'border-gray-200 text-gray-700'}
+              `}
+            >
+              <thead
+                class={`${$dark ? 'bg-gray-900' : 'bg-gray-100'}`}
+              >
+                <tr>
+                  <th class="px-4 py-2 text-left">N°</th>
+                  <th class="px-4 py-2 text-left">Placa</th>
+                  <th class="px-4 py-2 text-left">País</th>
+                  <th class="px-4 py-2 text-left">Asignar</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                  <tr
+                    class={`border-t
+                      ${$dark ? 'border-gray-700' : 'border-gray-200'}
+                    `}
+                  >
+                    <td class="px-4 py-2"></td>
+                    <td class="px-4 py-2 font-medium">{$clienteVehiculos.vehiculos}</td>
+                    <td class="px-4 py-2"></td>
+                    <td class="px-4 py-2"></td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex justify-end mt-6">
+            <button
+              on:click={closeVehiculosModal}
+              class={`px-4 py-2 rounded-md text-sm
+              ${$dark
+                ? 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-600 hover:bg-gray-100'}
+            `}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    {/if}
+    {#if $modalTarjetasOpen && $clienteTarjetas}
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      class={`w-full max-w-lg rounded-xl p-6 shadow-xl border
+        ${$dark
+          ? 'bg-gray-800 border-gray-700 text-gray-200'
+          : 'bg-white border-gray-200 text-gray-700'}
+      `}
+      role="document"
+    >
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold">
+          Tarjetas del cliente
+        </h3>
+
+        <button
+          on:click={closeTarjetasModal}
+          aria-label="Cerrar"
+          class={`rounded-md p-1
+            ${$dark
+              ? 'hover:bg-gray-700'
+              : 'hover:bg-gray-100'}
+          `}
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Info cliente -->
+      <div class={`mb-4 rounded-lg p-4 text-sm
+        ${$dark ? 'bg-gray-900' : 'bg-gray-50'}
+      `}>
+        <p class="font-medium">{ $clienteTarjetas.razonSocial }</p>
+        <p class="text-xs opacity-70">NIT: { $clienteTarjetas.nit }</p>
+      </div>
+
+      <!-- Contenido tarjetas -->
+      <div class="space-y-4">
+        <div
+          class={`flex items-center gap-4 rounded-lg p-4 border
+            ${$dark
+              ? 'bg-gray-900 border-gray-700'
+              : 'bg-white border-gray-200'}
+          `}
+        >
+          <!-- Icono -->
+          <div
+            class={`w-12 h-12 flex items-center justify-center rounded-full
+              ${$dark ? 'bg-blue-900/30' : 'bg-blue-100'}
+            `}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class={`w-6 h-6
+                ${$dark ? 'text-blue-400' : 'text-blue-600'}
+              `}
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.25 8.25h19.5M3 6.75h18A1.5 1.5 0 0 1 22.5 8.25v7.5A1.5 1.5 0 0 1 21 17.25H3A1.5 1.5 0 0 1 1.5 15.75v-7.5A1.5 1.5 0 0 1 3 6.75Zm3 6h3"
+              />
+            </svg>
+          </div>
+
+          <!-- Texto -->
+          <div>
+            <p class="text-sm font-medium">tarjetas</p>
+            <p class="text-xl font-semibold">
+              { $clienteTarjetas.tarjetas }
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end mt-6">
+        <button
+          on:click={closeTarjetasModal}
+          class={`px-4 py-2 rounded-md text-sm
+            ${$dark
+              ? 'text-gray-300 hover:bg-gray-700'
+              : 'text-gray-600 hover:bg-gray-100'}
+          `}
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 
 
 </section>

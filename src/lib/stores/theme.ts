@@ -75,6 +75,7 @@ export function handleModalKeyDown(e: KeyboardEvent) {
     closeModal();
     closeEditModal();
     closeDeleteModal();
+    closeVehiculosModal()
   }
 }
 export function openEditModal(cliente: Cliente) {
@@ -97,4 +98,31 @@ export function closeDeleteModal() {
 }
 export const modalDeleteOpen = writable(false);
 export const clienteDelete = writable<Cliente | null>(null);
+
+export const modalVehiculosOpen = writable(false);
+export const clienteVehiculos = writable<Cliente | null>(null);
+
+export function openVehiculosModal(cliente: Cliente) {
+  clienteVehiculos.set(cliente);
+  modalVehiculosOpen.set(true);
+}
+
+export function closeVehiculosModal() {
+  modalVehiculosOpen.set(false);
+  clienteVehiculos.set(null);
+}
+
+export const modalTarjetasOpen = writable(false);
+export const clienteTarjetas = writable<Cliente | null>(null);
+
+export function openTarjetasModal(cliente: Cliente) {
+  clienteTarjetas.set(cliente);
+  modalTarjetasOpen.set(true);
+}
+
+export function closeTarjetasModal() {
+  modalTarjetasOpen.set(false);
+  clienteTarjetas.set(null);
+}
+
 
