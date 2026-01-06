@@ -1,15 +1,7 @@
 <script lang="ts">
   export let data;
-    import { dark, modalOpen, openModal, closeModal } from "$lib/stores/theme";
-  interface Servicio {
-    id: number;
-    nombre: string;
-    precio: number;
-    rol: string;
-    equipo: string[];
-    estado: string;
-    presupuesto: string;
-  }
+  import { dark, modalOpen, openModal, closeModal } from "$lib/stores/theme";
+  import type { Servicio } from "$lib/types";
 
   let servicios: Servicio[] = data?.servicios || [
     {

@@ -1,4 +1,14 @@
-<footer class="bg-custom-header border-t border-custom-border p-4 text-center text-custom-text pl-64">
-  <p class="text-sm text-gray-500">&copy {new Date().getFullYear()} TailAdmin.</p>
+<script lang="ts">
+  import {dark, toggleDark  } from "$lib/stores/theme";
+</script>
+
+<footer class={`
+  border-t p-4 text-center pl-64
+  ${$dark ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-custom-header border-custom-border text-gray-500'}
+`}>
+  <p class="text-sm">
+    &copy; {new Date().getFullYear()} Petro
+  </p>
 </footer>
+
   

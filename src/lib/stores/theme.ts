@@ -1,4 +1,6 @@
 import { writable } from 'svelte/store';
+import type { Cliente } from '$lib/types/clientes';
+
 
 // Verifica si el usuario tiene una preferencia guardada
 const savedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : 'light';
@@ -11,17 +13,21 @@ export const theme = writable(initialTheme);
 if (typeof window !== 'undefined') {
   theme.subscribe(value => {
     const root = document.documentElement;
-    if (value === 'dark') {
+    const isDark = value === 'dark';
+
+    if (isDark) {
       root.classList.add('dark');
       root.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
     } else {
-      root.classList.add('light');
       root.classList.remove('dark');
+      root.classList.add('light');
+      localStorage.setItem('theme', 'light');
     }
-    localStorage.setItem('theme', value);
   });
 }
 export const sidebarOpen = writable(false);
+export const sidebarHover = writable(false);      
 
 // Cargar valor inicial desde localStorage
 const saved = typeof localStorage !== "undefined" 
@@ -49,6 +55,9 @@ export function toggleDark() {
 //control modales
 
 export const modalOpen = writable(false);
+export const modalEditOpen = writable(false);
+export const clienteEdit = writable<Cliente | null>(null);
+
 
 export function openModal() {
   modalOpen.set(true);
@@ -61,3 +70,31 @@ export function closeModal() {
 export function toggleModal() {
   modalOpen.update(v => !v);
 }
+export function handleModalKeyDown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeEditModal();
+    closeDeleteModal();
+  }
+}
+export function openEditModal(cliente: Cliente) {
+  clienteEdit.set(cliente);
+  modalEditOpen.set(true);
+}
+export function closeEditModal() {
+  modalEditOpen.set(false);
+  clienteEdit.set(null);
+}
+
+export function openDeleteModal(cliente: Cliente) {
+  clienteDelete.set(cliente);
+  modalDeleteOpen.set(true);
+}
+
+export function closeDeleteModal() {
+  modalDeleteOpen.set(false);
+  clienteDelete.set(null);
+}
+export const modalDeleteOpen = writable(false);
+export const clienteDelete = writable<Cliente | null>(null);
+

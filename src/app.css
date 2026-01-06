@@ -1,3 +1,30 @@
 
 @import "tailwindcss";
+@layer base {
+  :root {
+    --background: 255 255 255;
+    --text: 31 41 55;
+    --border: 209 213 219;
 
+    --sidebar-background: 255 255 255;
+    --header-background: 255 255 255;
+
+    /* GRISES PERSONALIZADOS */
+    --gray-700: 30 38 54;  /* #1E2636 */
+    --gray-800: 23 31 47;  /* #171F2F */
+    --gray-900: 16 24 40;  /* #101828 */
+  }
+  .dark {
+    --background: 16 24 40;
+    --text: 255 255 255;
+    --border: 55 65 81;
+    --sidebar-background: 23 31 47;
+    --header-background: 23 31 47;
+    
+    /* GRISES PERSONALIZADOS */
+    --gray-700: 30 38 54;  /* #1E2636 */
+    --gray-800: 23 31 47;  /* #171F2F */
+    --gray-900: 16 24 40;  /* #37486cff */
+  }
+
+}

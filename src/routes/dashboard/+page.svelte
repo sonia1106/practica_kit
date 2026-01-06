@@ -53,27 +53,30 @@
   }
 </script>
 
-<div class="p-6">
+<div class="p-6 w-full overflow-x-auto">
   <h2 class="text-2xl font-bold mb-4">Agregar Servicios</h2>
-  <div class="mb-6 flex space-x-2">
+  <div class="mb-6 flex flex-wrap gap-2 sm:flex-row">
     <input
       class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
       placeholder="Nombre"
       bind:value={nombre}
     />
+
     <input
       type="number"
       class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
       placeholder="Precio"
       bind:value={precio}
     />
+
     <button
-      class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      class="w-full sm:w-auto px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       on:click={agregar}
     >
       Agregar
     </button>
   </div>
+
 
   <h2 class="text-2xl font-bold mb-4">Lista de Servicios</h2>
   <table class="min-w-full divide-y divide-gray-200">
@@ -138,4 +141,5 @@
       </div>
     </div>
   {/if}
+  
 </div>

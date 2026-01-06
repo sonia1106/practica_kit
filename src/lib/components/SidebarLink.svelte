@@ -1,6 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { dark } from '$lib/stores/theme';
+  import { sidebarOpen, sidebarHover} from "$lib/stores/theme";
+
 
   export let href: string;
   export let label: string;
@@ -26,5 +28,10 @@
   {#if icon}
     <svelte:component this={icon} class="mr-3 size-5" />
   {/if}
-  <span>{label}</span>
+  <span
+  class={`
+              transition-all duration-200
+              ${$sidebarOpen || $sidebarHover? 'opacity-100 ml-0' : 'opacity-0 -ml-4 pointer-events-none'}
+            `}
+  >{label}</span>
 </a>

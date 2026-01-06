@@ -21,8 +21,10 @@
 </script>
 
 <header
-  class={`sticky top-0 z-999 flex flex-col lg:flex-row w-full transition-colors duration-300
-      px-4 pl-0 border-b
+  class={`fixed top-0 left-0 z-50 w-full
+    flex flex-col lg:flex-row
+    border-b
+    lg:sticky lg:top-0 lg:z-30
     ${$dark ? 'bg-gray-900 border-gray-700 text-gray-100' : 'bg-white border-gray-200 text-gray-700'}
   `}
 >
@@ -31,54 +33,53 @@
       class="flex w-full items-center justify-between gap-2 px-3 py-3 sm:gap-4 lg:justify-normal lg:px-0 lg:py-4 dark:border-gray-900"
     >
       <!-- Hamburger Toggle BTN -->
-      <button
+    <button
         aria-label="Toggle sidebar"
-        class={
-          $dark
-            ? "z-99999 flex h-10 w-10 items-center justify-center rounded-lg lg:h-11 lg:w-11 lg:border border-gray-800 text-gray-400 lg:bg-transparent hover:bg-gray-800"
-            : "z-99999 flex h-10 w-10 items-center justify-center rounded-lg lg:h-11 lg:w-11 lg:border border-gray-200 text-gray-500 lg:bg-transparent hover:bg-gray-100"
-        }
-        on:click={toggleSidebar}      >
+        on:click={toggleSidebar}
+        class={`
+          z-50 flex h-11 w-11 items-center justify-center rounded-lg
+          border-0 lg:border
+          ${$dark
+            ? 'text-gray-400 border-gray-800'
+            : 'text-gray-500 border-gray-200'
+          }
+        `}
+      >
+      {#if $sidebarOpen}
+        <!-- ICONO X (solo visible en mobile) -->
         <svg
-          class="hidden fill-current lg:block"
-          class:hidden={$sidebarOpen}
-          class:block={!$sidebarOpen}
-          width="16"
-          height="12"
-          viewBox="0 0 16 12"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M0.583252 1C0.583252 0.585788 0.919038 0.25 1.33325 0.25H14.6666C15.0808 0.25 15.4166 0.585786 15.4166 1C15.4166 1.41421 15.0808 1.75 14.6666 1.75L1.33325 1.75C0.919038 1.75 0.583252 1.41422 0.583252 1ZM0.583252 11C0.583252 10.5858 0.919038 10.25 1.33325 10.25L14.6666 10.25C15.0808 10.25 15.4166 10.5858 15.4166 11C15.4166 11.4142 15.0808 11.75 14.6666 11.75L1.33325 11.75C0.919038 11.75 0.583252 11.4142 0.583252 11ZM1.33325 5.25C0.919038 5.25 0.583252 5.58579 0.583252 6C0.583252 6.41421 0.919038 6.75 1.33325 6.75L7.99992 6.75C8.41413 6.75 8.74992 6.41421 8.74992 6C8.74992 5.58579 8.41413 5.25 7.99992 5.25L1.33325 5.25Z"
-          />
-        </svg>
-
-        <!-- Ícono hamburguesa (mobile) -->
-        <svg
-          class="fill-current lg:hidden ml:hidden"
-          class:hidden={$sidebarOpen}
-          class:block={!$sidebarOpen}
-          width="24"
-          height="24"
+          class="block lg:hidden w-5 h-5"
           viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M3.25 6C3.25 5.58579 3.58579 5.25 4 5.25L20 5.25C20.4142 5.25 20.75 5.58579 20.75 6C20.75 6.41421 20.4142 6.75 20 6.75L4 6.75C3.58579 6.75 3.25 6.41422 3.25 6ZM3.25 18C3.25 17.5858 3.58579 17.25 4 17.25L20 17.25C20.4142 17.25 20.75 17.5858 20.75 18C20.75 18.4142 20.4142 18.75 20 18.75L4 18.75C3.58579 18.75 3.25 18.4142 3.25 18ZM4 11.25C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75L12 12.75C12.4142 12.75 12.75 12.4142 12.75 12C12.75 11.5858 12.4142 11.25 12 11.25L4 11.25Z"
-          />
+          <path d="M18 6L6 18" />
+          <path d="M6 6l12 12" />
         </svg>
-      </button>
+      {/if}
+      <svg
+        class={`w-4 h-4 fill-current ${$sidebarOpen ? 'hidden lg:block' : 'block'}`}
+        viewBox="0 0 16 12"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M0.583252 1C0.583252 0.585788 0.919038 0.25 1.33325 0.25H14.6666C15.0808 0.25 15.4166 0.585786 15.4166 1C15.4166 1.41421 15.0808 1.75 14.6666 1.75H1.33325ZM0.583252 11C0.583252 10.5858 0.919038 10.25 1.33325 10.25H14.6666C15.0808 10.25 15.4166 10.5858 15.4166 11C15.4166 11.4142 15.0808 11.75 14.6666 11.75H1.33325ZM1.33325 5.25H7.99992C8.41413 5.25 8.74992 5.58579 8.74992 6C8.74992 6.41421 8.41413 6.75 7.99992 6.75H1.33325Z"
+        />
+      </svg>
+    </button>
+
 
       <!-- Logo -->
-      <a href="index.html" class="lg:hidden">
-        <img
-          src={$dark ? "./images/logo/logo-dark.svg" : "./images/logo/logo.svg"}
-          alt="Logo"
-        />
+      <a href="/dashboard" class="lg:hidden flex">
+        <div class="w-8 h-8 bg-blue-500 rounded-lg mr-2 flex items-center justify-center text-white font-bold">
+          P
+        </div>
+        <span class="text-xl font-bold">Petro</span>
       </a>
 
 
@@ -86,7 +87,18 @@
       <button
         aria-label="Toggle menu"
         class={`z-99999 flex h-10 w-10 items-center justify-center rounded-lg lg:hidden 
-          ${dark ? "text-gray-400 hover:bg-gray-800" : "text-gray-700 hover:bg-gray-100"}`}
+          ${$dark
+            ? `
+              ${openMenu.icon_resp
+                ? "bg-gray-800 text-gray-400"
+                : "text-gray-400 hover:bg-gray-800"}
+            `
+            : `
+              ${openMenu.icon_resp
+                ? "bg-gray-100 text-gray-600"
+                : "text-gray-600 hover:bg-gray-100"}
+            `}          
+          `}
         on:click={() => openMenu.icon_resp = !openMenu.icon_resp}
       >
         <svg
@@ -129,7 +141,7 @@
               id="search-input"
               class={`
                 shadow-xs focus:ring-brand-500/20 h-11 w-full rounded-lg border py-2.5 pr-14 pl-12 text-sm focus:ring-3 focus:outline-none xl:w-[430px]
-                ${$dark ? 'bg-gray-900 border-gray-800 text-white/90 placeholder:text-white/30 focus:border-brand-400'
+                ${$dark ? 'bg-gray-800 border-gray-800 text-white/90 placeholder:text-white/30 focus:border-brand-400'
                       : 'bg-transparent border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-brand-500'}
               `}
             />
@@ -158,19 +170,19 @@
       >      
         <div
           class={`flex flex-row lg:flex-row items-start lg:items-center justify-between lg:justify-end w-full gap-4 py-4
-            ${openMenu.icon_resp ? 'flex absolute top-full left-0 shadow-md lg:shadow-none lg:static lg:w-auto' : 'hidden lg:flex'}
+            ${openMenu.icon_resp ? 'flex absolute top-full left-0 shadow-md lg:shadow-none lg:static lg:w-auto p-4' : 'hidden lg:flex'}
             ${$dark ? 'bg-gray-900 border-gray-800 text-gray-100' : 'bg-white border-gray-200 text-gray-700'}
           `}
         >
             <div class="2xsm:gap-3 flex items-center gap-2">
               
-              <!-- 🌙/☀️ Modo oscuro -->
+              <!-- Modo oscuro -->
               <button
-                class={`relative flex h-11 w-11 items-center justify-center rounded-full border transition-colors
+                class={`relative flex h-11 w-11 items-center justify-center rounded-full border
                         ${$dark ? 'bg-gray-900 border-gray-800 text-gray-400 hover:bg-gray-800 hover:text-white' 
                               :'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
-                on:click={toggleDark}
-              >
+                      on:click={() => dark.update(v => !v)}
+               >
 
               {#if !$dark}
               <!-- Luna -->
@@ -207,7 +219,7 @@
               <!-- Notification Menu Area -->
               <div class="relative notification-wrapper ">
                 <button
-                class={`relative flex h-11 w-11 items-center justify-center rounded-full border transition-colors
+                class={`relative flex h-11 w-11 items-center justify-center rounded-full border
                         ${$dark ? 'bg-gray-900 border-gray-800 text-gray-400 hover:bg-gray-800 hover:text-white' 
                               : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
                       on:click={() => openMenu.notificacion = !openMenu.notificacion}
