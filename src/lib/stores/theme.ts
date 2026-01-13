@@ -126,3 +126,14 @@ export function closeTarjetasModal() {
 }
 
 
+export const modalClienteOpen = writable(false);
+
+export function openClienteModal() {
+  modalClienteOpen.set(true);
+}
+
+export function closeClienteModal() {
+  modalClienteOpen.set(false);
+}
+
+

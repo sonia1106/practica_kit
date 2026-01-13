@@ -140,9 +140,10 @@
               placeholder="Search or type command..."
               id="search-input"
               class={`
-                shadow-xs focus:ring-brand-500/20 h-11 w-full rounded-lg border py-2.5 pr-14 pl-12 text-sm focus:ring-3 focus:outline-none xl:w-[430px]
-                ${$dark ? 'bg-gray-800 border-gray-800 text-white/90 placeholder:text-white/30 focus:border-brand-400'
-                      : 'bg-transparent border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-brand-500'}
+                shadow-xs h-11 w-full rounded-lg border py-2.5 pr-14 pl-12 text-sm outline-none transition
+                focus:ring-1 focus:ring-inset                
+                ${$dark ? 'bg-gray-800 border-gray-700 text-white/90 placeholder:text-white/30 focus:border-brand-400 focus:ring-brand-400/20'
+                : 'bg-transparent border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-brand-400 focus:ring-brand-400/15'}
               `}
             />
             <button
