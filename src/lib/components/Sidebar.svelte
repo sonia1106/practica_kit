@@ -273,11 +273,11 @@
             {#if openMenu.inventario }
               <div class="ml-4 space-y-1">
                 <SidebarLink
-                href="/herramienta/nuevo"
+                href="/tools/new"
                 label="Nuevo"
                 />
                 <SidebarLink
-                href="/herramienta/seguimiento"
+                href="/tools/follow-up"
                 label="Seguimiento"
                 />
               </div>
@@ -300,7 +300,7 @@
             {#if openMenu.ventas}
               <div class="ml-4 space-y-1">
                 <SidebarLink
-                href="/herramienta/dosificaccion"
+                href="/tools/dosificaccion"
                 label="Dosificación"
                 />
                 <SidebarLink
