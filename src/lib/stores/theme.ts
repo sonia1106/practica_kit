@@ -27,11 +27,11 @@ if (typeof window !== 'undefined') {
   });
 }
 export const sidebarOpen = writable(false);
-export const sidebarHover = writable(false);      
+export const sidebarHover = writable(false);
 
 // Cargar valor inicial desde localStorage
-const saved = typeof localStorage !== "undefined" 
-  ? localStorage.getItem("theme") 
+const saved = typeof localStorage !== "undefined"
+  ? localStorage.getItem("theme")
   : null;
 
 export const dark = writable(saved === "dark");
