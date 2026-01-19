@@ -1,4 +1,4 @@
-import type { Cliente, ClienteForm, ClienteApi, ClienteOperacionDTO} from '$lib/types/clientes';
+import type { Cliente, ClienteForm, ClienteApi, ClienteOperacionDTO } from '$lib/types/clientes';
 import { clientes } from '$lib/stores/clientes';
 import { http } from '$lib/utils/http';
 

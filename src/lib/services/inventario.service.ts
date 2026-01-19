@@ -8,17 +8,16 @@ interface ApiResponse<T> {
     StrMensaje: string;
 }
 
-// Support for detailed response in different format if needed
 interface ApiMovimientosResponse {
     IntCodigo: number;
     oResultado: MovimientoCabecera[];
-    oResultadoDet: any[]; // If header endpoint also returns details? user said "Header & Detail"
+    oResultadoDet: any[];
     StrMensaje: string;
 }
 
 export async function obtenerItems() {
     const data = await http<ApiResponse<Item[]>>(
-        '/ItemObtener/0/1' // hardcoded 0/1 per example
+        '/ItemObtener/0/1'
     );
 
     items.set(data.oResultado);
@@ -43,7 +42,6 @@ export async function registrarMovimiento(payload: MovimientoRegistroDTO): Promi
 }
 
 export async function obtenerMovimientosCabecera(ffini: string, ffin: string, idEstacion: string) {
-    // The endpoint is a POST that returns list of headers
     const formData = new FormData();
     formData.append('ffini', ffini);
     formData.append('ffin', ffin);
@@ -69,10 +67,6 @@ export async function obtenerMovimientoDetalle(idTransaccion: number) {
     });
 
     const data = await response.json();
-    // The user said response structure: oResultado array with detailed info.
-    // Wait, earlier notes said "oResultadoDet" for Header&Detail endpoint, but independent detail endpoint returns what?
-    // User said "Obtiene Movimientos Inventario Detalle ... Response Structure: oResultado array"
-    // So let's assume oResultado is the array of details.
 
     movimientoSeleccionadoDetalle.set(data.oResultado || []);
     return data.oResultado || [];
