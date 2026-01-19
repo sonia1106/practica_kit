@@ -34,13 +34,13 @@ export interface Tanque {
 
 export interface ProductoMovimientoDTO {
     cantidad: string;
-    id: string; // id_item en string
+    id: string; 
     id_tanque: string;
     monto_total: number;
     precio: string;
     producto: string;
     tanque: string;
-    tipo: 1; // Always 1 for now?
+    tipo: 1;
 }
 
 export interface MovimientoRegistroDTO {
@@ -58,7 +58,7 @@ export interface MovimientoRegistroDTO {
     id_estacion: string;
     id_liquidacion: number;
     id_transaccion_tipo: string;
-    id_usuario: number; // hardcoded 46 per example?
+    id_usuario: number; 
     monto_total: number;
     nro_autorizacion: string;
     nro_despacho: string;
@@ -80,13 +80,12 @@ export interface MovimientoCabecera {
     id_transaccion: number;
     fecha: string;
     transaccion_tipo: string;
-    prov: string; // Destination/Source/Provider name?
+    prov: string; 
     monto_total: number;
     estado: string;
     origen: string;
-    referencia: string; // nro_factura or similar
+    referencia: string; 
     usuario: string;
-    // Add other fields as discovered from API
     id_estacion: number;
     nro_despacho: string;
 }

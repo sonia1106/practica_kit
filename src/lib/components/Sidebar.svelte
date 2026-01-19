@@ -1,84 +1,92 @@
 <script lang="ts">
-  let openMenu: { [key: string]: boolean } = {
-    parametro: false,
-    clientes: false,
-    herramientas: false,
-    inventario: false,
-    ventas: false,
-    autorizaciones: false,
-    reportes: false,
-    ayuda: false,
-    reportes_ventas: false,
-    otros: false,
-    parametroPinned: false,
-    escrituras: false,
-    operadores: false,
-    otros_c: false,
+	let openMenu: { [key: string]: boolean } = {
+		parametro: false,
+		clientes: false,
+		herramientas: false,
+		inventario: false,
+		ventas: false,
+		autorizaciones: false,
+		reportes: false,
+		ayuda: false,
+		reportes_ventas: false,
+		otros: false,
+		parametroPinned: false,
+		escrituras: false,
+		operadores: false,
+		otros_c: false
+	};
+	import { sidebarOpen, sidebarHover, dark } from '$lib/stores/theme';
+	import SidebarLink from '$lib/components/SidebarLink.svelte';
+	import { menuItemClasses } from '$lib/actions/menuClasses';
 
-  };
-  import { sidebarOpen, sidebarHover, dark } from "$lib/stores/theme";
-  import SidebarLink from '$lib/components/SidebarLink.svelte';
-  import { menuItemClasses } from '$lib/actions/menuClasses';
+	function closeAllExcept(key: string) {
+		for (const k in openMenu) {
+			if (k !== key) openMenu[k] = false;
+		}
+	}
+	function onEnter() {
+		if (window.innerWidth >= 1024) {
+			sidebarHover.set(true);
+		}
+	}
 
-  function closeAllExcept(key: string) {
-    for (const k in openMenu) {
-      if (k !== key) openMenu[k] = false;
-    }
-  }
-  function onEnter() {
-    if (window.innerWidth >= 1024) {
-      sidebarHover.set(true);
-    }
-  }
+	function onLeave() {
+		if (window.innerWidth >= 1024) {
+			sidebarHover.set(false);
+		}
+	}
 
-  function onLeave() {
-    if (window.innerWidth >= 1024) {
-      sidebarHover.set(false);
-    }
-  }
-   
-  if (!$sidebarOpen && !$sidebarHover) {
-    if (!openMenu.parametroPinned) {
-      openMenu.parametro = false;
-    }
-  }
+	if (!$sidebarOpen && !$sidebarHover) {
+		if (!openMenu.parametroPinned) {
+			openMenu.parametro = false;
+		}
+	}
 </script>
 
 <div
-  role="navigation"
-  on:mouseenter={onEnter}
-  on:mouseleave={onLeave}
-  class={`
-    fixed lg:static inset-y-0 min-h-screen left-0 h-full z-40
-     ease-in-out
-    ${$dark
-      ? 'bg-gray-900 border-gray-700 text-white border-r'
-      : 'bg-white border-gray-200 text-gray-700 border-r'}
-
+	role="navigation"
+	on:mouseenter={onEnter}
+	on:mouseleave={onLeave}
+	class={`
+    inset-y-0 left-0 lg:static lg:inset-auto lg:translate-x-0 fixed z-50 flex h-full flex-col
+    justify-between transition-all duration-300 outline-none
     ${
-      $sidebarOpen || $sidebarHover
-        ? 'w-64'
-        : 'w-22'
-    }
+			$dark
+				? 'bg-gray-900 border-gray-800 text-white backdrop-blur-md border-r'
+				: 'bg-white border-gray-200 text-gray-700 backdrop-blur-md border-r'
+		}
 
-    ${$sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    ${$sidebarOpen || $sidebarHover ? 'w-64' : 'w-22'}
+
+    ${$sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
   `}
 >
-  <div class="h-full flex flex-col p-2 space-y-1">
-    <div class="mb-6">
-      <a href="/dashboard" 
-        class="flex items-center mb-6 w-full text-left focus:outline-none pl-3 pt-6" > 
-        <div class="w-8 h-8 shrink-0 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold"
-        > P 
-        </div> 
-        <span class={` 
+	<div
+		class={`
+    sidebar-scroll-container space-y-1
+    min-h-0 flex h-full flex-1 flex-col overflow-x-hidden overflow-y-auto
+  `}
+	>
+		<div class="mb-6">
+			<a
+				href="/dashboard"
+				class="mb-8 pl-3 pt-6 group flex w-full items-center text-left focus:outline-none"
+			>
+				<div
+					class="w-8 h-8 from-blue-500 to-cyan-400 rounded-lg text-white font-bold shadow-lg shadow-blue-500/30 flex shrink-0 items-center justify-center bg-gradient-to-br transition-transform group-hover:scale-105"
+				>
+					P
+				</div>
+				<span
+					class={` 
           ml-2 text-xl font-bold whitespace-nowrap transition-all  
-          ${$sidebarOpen || $sidebarHover ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'} 
-          `} 
-        >Petro</span> </a>
+          ${$sidebarOpen || $sidebarHover ? 'w-auto opacity-100' : 'w-0 overflow-hidden opacity-0'} 
+          `}>Petro</span
+				>
+			</a>
 
-      <!-- MENU -->
-      <div class="mb-6">
+			<!-- MENU -->
+			<div class="mb-6">
         <p
           class={`
             text-xs font-semibold mb-2 uppercase tracking-wider
@@ -89,9 +97,9 @@
           <!-- TEXTO MENU -->
           <span
             class={`
-              hidden lg:inline transition-all
+              hidden lg:inline transition-all 
               ${$sidebarOpen || $sidebarHover
-                ? 'opacity-100 ml-0'
+                ? 'opacity-100 ml-0 pl-5'
                 : 'opacity-0 -ml-4 pointer-events-none'}
             `}
           >
@@ -168,54 +176,18 @@
             href="/customers"
             label="Clientes"
             />
-            <button
-              on:click={() => openMenu.escrituras = !openMenu.escrituras}
-              class={`
-                flex items-center justify-between p-2 w-full rounded-lg text-base font-medium
-                ${menuItemClasses(openMenu.escrituras, $dark)}
-              `}
-            >
-              <span>Escrituras</span>
-              <span class={`transition ${openMenu.escrituras ? 'rotate-90' : ''}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </span>
-            </button>
-            {#if openMenu.escrituras }
-            {/if}
-            <button
-              on:click={() => openMenu.operadores = !openMenu.operadores}
-              class={`
-                flex items-center justify-between p-2 w-full rounded-lg text-base font-medium
-                ${menuItemClasses(openMenu.operadores, $dark)}
-              `}
-            >
-              <span>Operadores</span>
-              <span class={`transition ${openMenu.operadores? 'rotate-90' : ''}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </span>
-            </button>
-            {#if openMenu.operadores }
-            {/if}
-            <button
-              on:click={() => openMenu.otros_c = !openMenu.otros_c}
-              class={`
-                flex items-center justify-between p-2 w-full rounded-lg text-base font-medium
-                ${menuItemClasses(openMenu.otros_c, $dark)}
-              `}
-            >
-              <span>Otros</span>
-              <span class={`transition ${openMenu.otros_c ? 'rotate-90' : ''}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </span>
-            </button>
-            {#if openMenu.otros_c }
-            {/if}
+            <SidebarLink
+            href="/writing"
+            label="Escrituras"
+            />
+            <SidebarLink
+            href="/operators"
+            label="Operadores"
+            />
+            <SidebarLink
+            href="/others"
+            label="Otros"
+            />
             <SidebarLink
             href="/combustibles"
             label="Combustibles"
@@ -471,3 +443,23 @@
   </div>
 </div>
 
+<style>
+	.sidebar-scroll-container::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.sidebar-scroll-container::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.sidebar-scroll-container::-webkit-scrollbar-thumb {
+		background-color: rgba(156, 163, 175, 0.5);
+		border-radius: 9999px;
+		border: 2px solid transparent;
+		background-clip: content-box;
+	}
+
+	.sidebar-scroll-container::-webkit-scrollbar-thumb:hover {
+		background-color: rgba(107, 114, 128, 0.8);
+	}
+</style>

@@ -8,17 +8,19 @@
 		obtenerItems,
 		obtenerTanques,
 		registrarMovimiento
-	} from '$lib/services/inventario.service';
+	} from '$lib/services/inventario.service2';
 	import type { ProductoMovimientoDTO, MovimientoRegistroDTO } from '$lib/types/inventario';
 
-	// Form State
 	let tipoDocumentoSeleccionado = '';
 	let estacion = 'ESTACION DE SERVICIO LUCIFER';
-	let idEstacion = '8'; // Hardcoded per requirement? Or derived? '8' was in valid payload
+	let idEstacion = '8';
 
-	// Transport Detail
 	let proveedorSeleccionado = '';
-	let fechaDespacho = new Date().toISOString().split('T')[0];
+	// Calculate local date string YYYY-MM-DD
+	const now = new Date();
+	const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+	let fechaDespacho = localDate;
 	let nroDespacho = '';
 	let nroOrden = '';
 	let placaCisterna = '';
@@ -28,24 +30,20 @@
 	let nroAutorizacion = '';
 	let codigoControl = '';
 
-	// Reception Detail (Line Item)
-	let fechaRecepcion = new Date().toISOString().split('T')[0];
-	let grupoSeleccionado = 1; // 1: Combustible
+	let fechaRecepcion = localDate;
+	let grupoSeleccionado = 1;
 	let tanqueSeleccionadoId = 0;
 	let productoSeleccionadoId = 0;
 	let precioCosto = 0;
 	let volRecibido = 0;
 
-	// List of items
 	let movimientoItems: ProductoMovimientoDTO[] = [];
 
-	// Computed
 	$: productoSeleccionado = $items.find((i) => i.id_item === productoSeleccionadoId);
 	$: tanqueSeleccionado = $tanques.find((t) => t.id_tanques === tanqueSeleccionadoId);
 	$: importeCalculado = (precioCosto * volRecibido).toFixed(2);
 	$: totalGeneral = movimientoItems.reduce((sum, item) => sum + item.monto_total, 0);
 
-	// Handlers
 	onMount(async () => {
 		await Promise.all([obtenerClientes(), obtenerItems(), obtenerTanques(idEstacion)]);
 	});
@@ -61,7 +59,7 @@
 			id_tanque: tanqueSeleccionadoId.toString(),
 			cantidad: volRecibido.toString(),
 			monto_total: parseFloat(importeCalculado),
-			precio: precioCosto.toFixed(2), // API expects string
+			precio: precioCosto.toFixed(2),
 			producto: productoSeleccionado?.descripcion || 'Desconocido',
 			tanque: tanqueSeleccionado?.descripcion || 'Desconocido',
 			tipo: 1
@@ -69,7 +67,6 @@
 
 		movimientoItems = [...movimientoItems, newItem];
 
-		// Reset item fields
 		volRecibido = 0;
 		precioCosto = 0;
 		productoSeleccionadoId = 0;
@@ -90,18 +87,18 @@
 			bancarizacion: '',
 			codigo_control: codigoControl,
 			conductor: conductor,
-			destino: estacion.split(' ').join('+'), // Encode? Payload example had +
-			fecha_factura: fechaDespacho, // Using Despacho as Factura date based on example?
+			destino: estacion.split(' ').join('+'),
+			fecha_factura: fechaDespacho,
 			fecha_venta: fechaRecepcion,
-			grupoProducto: 1, // hardcoded per example
+			grupoProducto: 1,
 			id_antena: 0,
 			id_autorizacion: 0,
 			id_banco: 0,
-			id_consumidor: 1, // hardcoded per example?
+			id_consumidor: 1,
 			id_estacion: idEstacion,
 			id_liquidacion: 0,
 			id_transaccion_tipo: '2',
-			id_usuario: 46, // hardcoded per example
+			id_usuario: 46,
 			monto_total: totalGeneral,
 			nro_autorizacion: nroAutorizacion,
 			nro_despacho: nroDespacho,
@@ -111,7 +108,7 @@
 			numero: '',
 			observaciones: 'REGISTRO MANUAL',
 			placa_cisterna: placaCisterna,
-			precintos: '', // Add field if needed
+			precintos: '',
 			productos: movimientoItems,
 			tipo: '1',
 			tipo_documento: 0,
@@ -123,7 +120,6 @@
 			await registrarMovimiento(payload);
 			alert('Movimiento registrado exitosamente');
 			movimientoItems = [];
-			// Reset header fields if needed
 		} catch (e) {
 			console.error(e);
 			alert('Error al registrar movimiento');
@@ -136,7 +132,20 @@
     ${$dark ? 'bg-gray-900 text-gray-200' : 'bg-white text-gray-700'}
   `}
 >
-	<h1 class="text-xl font-semibold mb-4">Registro Inventario</h1>
+	<div class="sm:flex-row gap-4 pb-6 flex flex-col justify-between">
+		<h2 class="text-lg font-bold">Monitoreo Movimientos de Inventario</h2>
+		<span class="text-sm text-gray-500">
+			Herramientas/
+			<a
+				href="/tools/new"
+				class={`
+          ${$dark ? 'text-gray-300 hover:text-gray-100' : 'text-gray-700 hover:text-gray-800'}
+        `}
+			>
+				Nuevo
+			</a>
+		</span>
+	</div>
 
 	<div
 		class={`rounded-lg shadow overflow-hidden border transition-colors
@@ -146,8 +155,9 @@
 		<div class="p-4 md:p-6 space-y-8">
 			<div class="md:grid-cols-2 gap-4 md:gap-6 grid grid-cols-1">
 				<div class="sm:flex-row sm:items-center gap-2 flex flex-col">
-					<label class="sm:w-32 lg:w-40 text-sm font-medium">Estación :</label>
+					<label for="estacion" class="sm:w-32 lg:w-40 text-sm font-medium">Estación :</label>
 					<select
+						id="estacion"
 						bind:value={estacion}
 						disabled
 						class={`rounded-md px-3 py-2 text-sm w-full flex-1 border
@@ -159,8 +169,11 @@
 				</div>
 
 				<div class="sm:flex-row sm:items-center gap-2 flex flex-col">
-					<label class="sm:w-32 lg:w-40 text-sm font-medium">Tipo de Documento :</label>
+					<label for="tipo-documento" class="sm:w-32 lg:w-40 text-sm font-medium"
+						>Tipo de Documento :</label
+					>
 					<select
+						id="tipo-documento"
 						bind:value={tipoDocumentoSeleccionado}
 						class={`rounded-md px-3 py-2 text-sm w-full flex-1 border
               ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}
@@ -183,8 +196,9 @@
 
 					<div class="sm:grid-cols-2 lg:grid-cols-3 gap-4 grid grid-cols-1">
 						<div class="gap-1 lg:col-span-1 flex flex-col">
-							<label class="text-sm font-medium">Proveedor :</label>
+							<label for="proveedor" class="text-sm font-medium">Proveedor :</label>
 							<select
+								id="proveedor"
 								bind:value={proveedorSeleccionado}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
 							>
@@ -196,8 +210,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Fecha Despacho :</label>
+							<label for="fecha-despacho" class="text-sm font-medium">Fecha Despacho :</label>
 							<input
+								id="fecha-despacho"
 								type="date"
 								bind:value={fechaDespacho}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -205,8 +220,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Nro. Factura :</label>
+							<label for="nro-factura" class="text-sm font-medium">Nro. Factura :</label>
 							<input
+								id="nro-factura"
 								type="text"
 								bind:value={nroFactura}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -214,8 +230,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Nro. Autorización :</label>
+							<label for="nro-autorizacion" class="text-sm font-medium">Nro. Autorización :</label>
 							<input
+								id="nro-autorizacion"
 								type="text"
 								bind:value={nroAutorizacion}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -223,8 +240,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Cod. Control :</label>
+							<label for="codigo-control" class="text-sm font-medium">Cod. Control :</label>
 							<input
+								id="codigo-control"
 								type="text"
 								bind:value={codigoControl}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -232,8 +250,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Nro. Despacho :</label>
+							<label for="nro-despacho" class="text-sm font-medium">Nro. Despacho :</label>
 							<input
+								id="nro-despacho"
 								type="text"
 								bind:value={nroDespacho}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -241,8 +260,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Nro. Orden :</label>
+							<label for="nro-orden" class="text-sm font-medium">Nro. Orden :</label>
 							<input
+								id="nro-orden"
 								type="text"
 								bind:value={nroOrden}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -250,8 +270,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Placa Cisterna :</label>
+							<label for="placa-cisterna" class="text-sm font-medium">Placa Cisterna :</label>
 							<input
+								id="placa-cisterna"
 								type="text"
 								bind:value={placaCisterna}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -259,8 +280,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Conductor :</label>
+							<label for="conductor" class="text-sm font-medium">Conductor :</label>
 							<input
+								id="conductor"
 								type="text"
 								bind:value={conductor}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -268,8 +290,9 @@
 						</div>
 
 						<div class="gap-1 flex flex-col">
-							<label class="text-sm font-medium">Volumen Planta :</label>
+							<label for="volumen-planta" class="text-sm font-medium">Volumen Planta :</label>
 							<input
+								id="volumen-planta"
 								type="text"
 								bind:value={volumenPlanta}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -277,8 +300,9 @@
 						</div>
 
 						<div class="gap-1 sm:col-span-2 flex flex-col">
-							<label class="text-sm font-medium">Destino :</label>
+							<label for="destino" class="text-sm font-medium">Destino :</label>
 							<input
+								id="destino"
 								readonly
 								value={estacion}
 								class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-600 border-gray-600' : 'bg-gray-100 border-gray-300'}`}
@@ -295,8 +319,9 @@
 
 				<div class="sm:grid-cols-2 lg:grid-cols-4 gap-4 grid grid-cols-1">
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Fecha Recepción :</label>
+						<label for="fecha-recepcion" class="text-sm font-medium">Fecha Recepción :</label>
 						<input
+							id="fecha-recepcion"
 							type="date"
 							bind:value={fechaRecepcion}
 							class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
@@ -304,8 +329,9 @@
 					</div>
 
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Grupo :</label>
+						<label for="grupo" class="text-sm font-medium">Grupo :</label>
 						<select
+							id="grupo"
 							bind:value={grupoSeleccionado}
 							class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
 						>
@@ -315,8 +341,9 @@
 					</div>
 
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Tanque :</label>
+						<label for="tanque" class="text-sm font-medium">Tanque :</label>
 						<select
+							id="tanque"
 							bind:value={tanqueSeleccionadoId}
 							class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
 						>
@@ -328,8 +355,9 @@
 					</div>
 
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Producto :</label>
+						<label for="producto" class="text-sm font-medium">Producto :</label>
 						<select
+							id="producto"
 							bind:value={productoSeleccionadoId}
 							class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
 						>
@@ -341,8 +369,9 @@
 					</div>
 
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Precio Costo :</label>
+						<label for="precio-costo" class="text-sm font-medium">Precio Costo :</label>
 						<input
+							id="precio-costo"
 							type="number"
 							step="0.01"
 							bind:value={precioCosto}
@@ -351,8 +380,9 @@
 					</div>
 
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Vol. Recibido :</label>
+						<label for="vol-recibido" class="text-sm font-medium">Vol. Recibido :</label>
 						<input
+							id="vol-recibido"
 							type="number"
 							step="0.01"
 							bind:value={volRecibido}
@@ -361,8 +391,9 @@
 					</div>
 
 					<div class="gap-1 flex flex-col">
-						<label class="text-sm font-medium">Importe :</label>
+						<label for="importe" class="text-sm font-medium">Importe :</label>
 						<input
+							id="importe"
 							readonly
 							value={importeCalculado}
 							class={`rounded-md px-3 py-2 text-sm border ${$dark ? 'bg-gray-600 border-gray-600' : 'bg-gray-200 border-gray-300'}`}

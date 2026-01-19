@@ -30,7 +30,7 @@ export async function crearCliente(form: ClienteForm): Promise<void> {
   const payload: ClienteOperacionDTO = {
     id_clientes: 0,
     razon_social: form.razon_social,
-    nit: form.nit,
+    nit: Number(form.nit),
     direccion: form.direccion,
     telefono: form.telefono,
     contacto: form.contacto,
@@ -50,7 +50,7 @@ export async function actualizarCliente(id: number, form: ClienteForm): Promise<
   const payload: ClienteOperacionDTO = {
     id_clientes: id,
     razon_social: form.razon_social,
-    nit: form.nit,
+    nit: Number(form.nit),
     direccion: form.direccion,
     telefono: form.telefono,
     contacto: form.contacto,
