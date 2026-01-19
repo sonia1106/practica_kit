@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { dark } from '$lib/stores/theme';
-	import { movimientos, movimientoSeleccionadoDetalle } from '$lib/stores/inventario';
+	import { dark, modalState, openModal, closeModal, handleModalKeyDown } from '$lib/stores/theme';
+	import { movimientos, movimientoSeleccionadoDetalle, descargarPDF } from '$lib/stores/inventario';
 	import {
 		obtenerMovimientosCabecera,
 		obtenerMovimientoDetalle
 	} from '$lib/services/inventario.service2';
 	import type { MovimientoCabecera, MovimientoDetalle } from '$lib/types/inventario';
-	import jsPDF from 'jspdf';
-	import autoTable from 'jspdf-autotable';
 
 	let ffini = new Date().toISOString().split('T')[0];
 	let ffin = new Date().toISOString().split('T')[0];
@@ -16,9 +14,6 @@
 
 	let searchQuery = '';
 
-	let modalDetalleOpen = false;
-	let modalEditarOpen = false;
-	let movimientoSeleccionado: MovimientoCabecera | null = null;
 	let loadingDetalle = false;
 
 	let currentPage = 1;
@@ -47,72 +42,27 @@
 	});
 
 	async function verDetalle(mov: MovimientoCabecera) {
-		movimientoSeleccionado = mov;
-		modalDetalleOpen = true;
+		openModal('DETALLE', mov);
 		loadingDetalle = true;
 		await obtenerMovimientoDetalle(mov.id_transaccion);
 		loadingDetalle = false;
 	}
 
 	function editarMovimiento(mov: MovimientoCabecera) {
-		movimientoSeleccionado = { ...mov };
-		modalEditarOpen = true;
-	}
-
-	async function descargarPDF(mov: MovimientoCabecera) {
-		try {
-			const detalles = await obtenerMovimientoDetalle(mov.id_transaccion);
-			const doc = new jsPDF();
-
-			// Encabezado
-			doc.setFontSize(18);
-			doc.text('Detalle de Movimiento', 14, 22);
-
-			doc.setFontSize(11);
-			doc.setTextColor(100);
-			doc.text(`Nro: ${mov.id_transaccion}`, 14, 32);
-			doc.text(`Fecha: ${mov.fecha ? mov.fecha.split('T')[0] : ''}`, 100, 32);
-			doc.text(`Tipo: ${mov.transaccion_tipo}`, 14, 38);
-			doc.text(`Estación: ${idEstacion}`, 100, 38);
-			doc.text(`Referencia: ${mov.referencia || '-'}`, 14, 44);
-			doc.text(`Usuario: ${mov.usuario || '-'}`, 100, 44);
-			doc.text(`Proveedor/Destino: ${mov.prov || mov.origen || '-'}`, 14, 50);
-
-			// Tabla
-			autoTable(doc, {
-				startY: 58,
-				head: [['Producto', 'Tanque', 'Cantidad', 'Precio', 'Total']],
-				body: detalles.map((d) => [
-					d.producto,
-					d.tanque,
-					d.cantidad.toLocaleString('en-US'),
-					d.precio.toFixed(2),
-					d.monto_total.toLocaleString('en-US', { minimumFractionDigits: 2 })
-				])
-			});
-
-			doc.save(`movimiento-${mov.id_transaccion}.pdf`);
-		} catch (e) {
-			console.error('Error generando PDF', e);
-			alert('Error al generar el PDF');
-		}
-	}
-
-	function cerrarModals() {
-		modalDetalleOpen = false;
-		modalEditarOpen = false;
-		movimientoSeleccionado = null;
+		openModal('EDITAR', { ...mov });
 	}
 
 	function guardarEdicion() {
 		alert('Guardar edición no implementado aún.');
-		cerrarModals();
+		closeModal();
 	}
 
 	function changePage(delta: number) {
 		currentPage = Math.max(1, Math.min(totalPages, currentPage + delta));
 	}
 </script>
+
+<svelte:window on:keydown={handleModalKeyDown} />
 
 <div
 	class={`p-6 pb-6 bg-slate-900 min-h-full transition-colors
@@ -122,7 +72,7 @@
 	<div class="sm:flex-row gap-4 pb-6 flex flex-col justify-between">
 		<h2 class="text-lg font-bold">Monitoreo Movimientos de Inventario</h2>
 		<span class="text-sm text-gray-500">
-			Herramientas/
+			Herramientas/ Inventario/
 			<a
 				href="/tools/follow-up"
 				class={`
@@ -238,7 +188,7 @@
 								<td class="px-4 py-2">
 									<div class="space-x-2 flex justify-center">
 										<button
-											on:click={() => descargarPDF(mov)}
+											on:click={() => descargarPDF(mov, idEstacion)}
 											title="PDF"
 											class="text-gray-500 hover:text-gray-700 transition"
 										>
@@ -361,7 +311,7 @@
 </div>
 
 <!-- MODAL DETALLE -->
-{#if modalDetalleOpen && movimientoSeleccionado}
+{#if $modalState.view === 'DETALLE' && $modalState.data}
 	<div class="inset-0 bg-black/50 backdrop-blur-sm fixed z-50 flex items-center justify-center">
 		<div
 			class={`max-w-4xl rounded-lg p-6 shadow-xl max-h-[90vh] w-full overflow-y-auto
@@ -370,35 +320,35 @@
 		>
 			<div class="mb-4 pb-2 border-gray-500/30 flex items-center justify-between border-b">
 				<h3 class="text-xl font-bold">
-					Detalle de Movimiento #{movimientoSeleccionado.id_transaccion}
+					Detalle de Movimiento #{$modalState.data.id_transaccion}
 				</h3>
-				<button on:click={cerrarModals} class="text-2xl hover:text-red-500">&times;</button>
+				<button on:click={closeModal} class="text-2xl hover:text-red-500">&times;</button>
 			</div>
 
 			<div class="md:grid-cols-4 gap-4 mb-6 text-sm grid grid-cols-2">
 				<div>
 					<span class="font-bold block opacity-70">Fecha:</span>
-					{movimientoSeleccionado.fecha}
+					{$modalState.data.fecha}
 				</div>
 				<div>
 					<span class="font-bold block opacity-70">Tipo:</span>
-					{movimientoSeleccionado.transaccion_tipo}
+					{$modalState.data.transaccion_tipo}
 				</div>
 				<div>
 					<span class="font-bold block opacity-70">Estado:</span>
-					{movimientoSeleccionado.estado}
+					{$modalState.data.estado}
 				</div>
 				<div>
 					<span class="font-bold block opacity-70">Usuario:</span>
-					{movimientoSeleccionado.usuario}
+					{$modalState.data.usuario}
 				</div>
 				<div class="md:col-span-2">
 					<span class="font-bold block opacity-70">Referencia:</span>
-					{movimientoSeleccionado.referencia || '-'}
+					{$modalState.data.referencia || '-'}
 				</div>
 				<div class="md:col-span-2">
 					<span class="font-bold block opacity-70">Proveedor/Origen:</span>
-					{movimientoSeleccionado.prov || movimientoSeleccionado.origen}
+					{$modalState.data.prov || $modalState.data.origen}
 				</div>
 			</div>
 
@@ -440,7 +390,7 @@
 
 			<div class="mt-6 flex justify-end">
 				<button
-					on:click={cerrarModals}
+					on:click={closeModal}
 					class="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600 transition"
 				>
 					Cerrar
@@ -451,7 +401,7 @@
 {/if}
 
 <!-- MODAL EDITAR -->
-{#if modalEditarOpen && movimientoSeleccionado}
+{#if $modalState.view === 'EDITAR' && $modalState.data}
 	<div class="inset-0 bg-black/50 backdrop-blur-sm fixed z-50 flex items-center justify-center">
 		<div
 			class={`max-w-lg rounded-lg p-6 shadow-xl w-full
@@ -459,7 +409,7 @@
   `}
 		>
 			<h3 class="text-lg font-semibold mb-4">
-				Editar Movimiento #{movimientoSeleccionado.id_transaccion}
+				Editar Movimiento #{$modalState.data.id_transaccion}
 			</h3>
 
 			<div class="space-y-4">
@@ -467,7 +417,7 @@
 					<label for="edit-referencia" class="text-sm font-medium mb-1 block">Referencia</label>
 					<input
 						id="edit-referencia"
-						bind:value={movimientoSeleccionado.referencia}
+						bind:value={$modalState.data.referencia}
 						class="input px-3 py-2 rounded w-full border bg-transparent"
 					/>
 				</div>
@@ -475,7 +425,7 @@
 					<label for="edit-usuario" class="text-sm font-medium mb-1 block">Usuario</label>
 					<input
 						id="edit-usuario"
-						bind:value={movimientoSeleccionado.usuario}
+						bind:value={$modalState.data.usuario}
 						class="input px-3 py-2 rounded w-full border bg-transparent"
 					/>
 				</div>
@@ -484,7 +434,7 @@
 
 			<div class="gap-2 mt-6 flex justify-end">
 				<button
-					on:click={cerrarModals}
+					on:click={closeModal}
 					class="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600"
 				>
 					Cancelar

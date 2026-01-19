@@ -52,88 +52,35 @@ export function toggleDark() {
   dark.update(v => !v);
 }
 
-//control modales
+// control modales
 
-export const modalOpen = writable(false);
-export const modalEditOpen = writable(false);
-export const clienteEdit = writable<Cliente | null>(null);
+export const modalState = writable<{
+  view: string | null;
+  data: any;
+}>({
+  view: null,
+  data: null
+});
 
+export const modalOpen = writable(false); // Mantener por compatibilidad si es necesario, pero idealmente migrar.
 
-export function openModal() {
-  modalOpen.set(true);
+// Función unificada para abrir modales
+export function openModal(view: string, data: any = null) {
+  modalState.set({ view, data });
+  modalOpen.set(true); // Opcional, para compatibilidad
 }
 
+// Función unificada para cerrar
 export function closeModal() {
-  modalOpen.set(false);
+  modalState.set({ view: null, data: null });
+  modalOpen.set(false); // Opcional
 }
 
-export function toggleModal() {
-  modalOpen.update(v => !v);
-}
 export function handleModalKeyDown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     closeModal();
-    closeEditModal();
-    closeDeleteModal();
-    closeVehiculosModal()
   }
 }
-export function openEditModal(cliente: Cliente) {
-  clienteEdit.set(cliente);
-  modalEditOpen.set(true);
-}
-export function closeEditModal() {
-  modalEditOpen.set(false);
-  clienteEdit.set(null);
-}
 
-export function openDeleteModal(cliente: Cliente) {
-  clienteDelete.set(cliente);
-  modalDeleteOpen.set(true);
-}
-
-export function closeDeleteModal() {
-  modalDeleteOpen.set(false);
-  clienteDelete.set(null);
-}
-export const modalDeleteOpen = writable(false);
-export const clienteDelete = writable<Cliente | null>(null);
-
-export const modalVehiculosOpen = writable(false);
-export const clienteVehiculos = writable<Cliente | null>(null);
-
-export function openVehiculosModal(cliente: Cliente) {
-  clienteVehiculos.set(cliente);
-  modalVehiculosOpen.set(true);
-}
-
-export function closeVehiculosModal() {
-  modalVehiculosOpen.set(false);
-  clienteVehiculos.set(null);
-}
-
-export const modalTarjetasOpen = writable(false);
-export const clienteTarjetas = writable<Cliente | null>(null);
-
-export function openTarjetasModal(cliente: Cliente) {
-  clienteTarjetas.set(cliente);
-  modalTarjetasOpen.set(true);
-}
-
-export function closeTarjetasModal() {
-  modalTarjetasOpen.set(false);
-  clienteTarjetas.set(null);
-}
-
-
-export const modalClienteOpen = writable(false);
-
-export function openClienteModal() {
-  modalClienteOpen.set(true);
-}
-
-export function closeClienteModal() {
-  modalClienteOpen.set(false);
-}
 
 

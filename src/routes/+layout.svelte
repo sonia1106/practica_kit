@@ -5,7 +5,6 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import { sidebarOpen, dark } from '$lib/stores/theme';
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
 	let sidebarToggle = false; // estado del sidebar
@@ -35,5 +34,5 @@
 </div>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/images/favicon.ico" />
 </svelte:head>

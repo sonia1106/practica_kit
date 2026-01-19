@@ -79,20 +79,20 @@
 			<button
 				aria-label="Toggle menu"
 				class={`h-10 w-10 rounded-lg lg:hidden z-99999 flex items-center justify-center 
-          ${
-						$dark
-							? `
-              ${
-								openMenu.icon_resp ? 'bg-gray-800 text-gray-400' : 'text-gray-400 hover:bg-gray-800'
-							}
-            `
-							: `
-              ${
-								openMenu.icon_resp ? 'bg-gray-100 text-gray-600' : 'text-gray-600 hover:bg-gray-100'
-							}
-            `
-					}          
-          `}
+          		${
+								$dark
+									? `${
+											openMenu.icon_resp
+												? 'bg-gray-800 text-gray-400'
+												: 'text-gray-400 hover:bg-gray-800'
+										}`
+									: `${
+											openMenu.icon_resp
+												? 'bg-gray-100 text-gray-600'
+												: 'text-gray-600 hover:bg-gray-100'
+										}`
+							}          
+          		`}
 				on:click={() => (openMenu.icon_resp = !openMenu.icon_resp)}
 			>
 				<svg
@@ -138,21 +138,21 @@
 							placeholder="Search or type command..."
 							id="search-input"
 							class={`
-                shadow-xs h-11 rounded-lg py-2.5 pr-14 pl-12 text-sm w-full border transition outline-none
-                focus:ring-1 focus:ring-inset                
-                ${
-									$dark
-										? 'bg-gray-800 border-gray-700 text-white/90 placeholder:text-white/30 focus:border-brand-400 focus:ring-brand-400/20'
-										: 'border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-brand-400 focus:ring-brand-400/15 bg-transparent'
-								}
-              `}
+                					shadow-xs h-11 rounded-lg py-2.5 pr-14 pl-12 text-sm w-full border transition outline-none
+                					focus:ring-1 focus:ring-inset                
+                					${
+														$dark
+															? 'bg-gray-800 border-gray-700 text-white/90 placeholder:text-white/30 focus:border-brand-400 focus:ring-brand-400/20'
+															: 'border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-brand-400 focus:ring-brand-400/15 bg-transparent'
+													}
+              				`}
 						/>
 						<button
 							id="search-button"
 							class={`
-                right-2.5 gap-0.5 rounded-lg text-xs absolute top-1/2 inline-flex -translate-y-1/2 items-center border px-[7px] py-[4.5px]
-                ${$dark ? 'border-gray-800 bg-white/[0.03] text-gray-400' : 'border-gray-200 bg-gray-50 text-gray-500'}
-              `}
+								right-2.5 gap-0.5 rounded-lg text-xs absolute top-1/2 inline-flex -translate-y-1/2 items-center border px-[7px] py-[4.5px]
+								${$dark ? 'border-gray-800 bg-white/[0.03] text-gray-400' : 'border-gray-200 bg-gray-50 text-gray-500'}
+							`}
 						>
 							<span> ⌘ </span>
 							<span> K </span>
@@ -174,8 +174,8 @@
 		>
 			<div
 				class={`lg:flex-row lg:items-center lg:justify-end gap-4 py-4 flex w-full flex-row items-start justify-between
-            ${openMenu.icon_resp ? 'left-0 shadow-md lg:shadow-none lg:static lg:w-auto p-4 absolute top-full flex' : 'lg:flex hidden'}
-            ${$dark ? 'bg-gray-900 border-gray-800 text-gray-100' : 'bg-white border-gray-200 text-gray-700'}
+           			${openMenu.icon_resp ? 'left-0 shadow-md lg:shadow-none lg:static lg:w-auto p-4 absolute top-full flex' : 'lg:flex hidden'}
+            		${$dark ? 'bg-gray-900 border-gray-800 text-gray-100' : 'bg-white border-gray-200 text-gray-700'}
           `}
 			>
 				<div class="2xsm:gap-3 gap-2 flex items-center">
@@ -191,7 +191,6 @@
 					>
 						{#if !$dark}
 							<!-- Luna -->
-
 							<svg
 								class="hidden dark:block"
 								width="20"
@@ -267,19 +266,19 @@
 						{#if openMenu.notificacion}
 							<div
 								class={`
-                  shadow-lg mt-2 rounded-lg p-0 sm:w-[360px] lg:right-0 p-3 absolute
-                  -right-[240px] flex h-[400px] w-[350px] flex-col border
-                  ${$dark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-800'}
-                `}
+									shadow-lg mt-2 rounded-lg p-0 sm:w-[360px] lg:right-0 p-3 absolute
+									-right-[240px] flex h-[400px] w-[350px] flex-col border
+									${$dark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-800'}
+								`}
 							>
 								<div class="mb-2 p-1 pl-1 flex items-center justify-between">
 									<h5 class="text-lg font-semibold">Notification</h5>
 									<button
 										on:click={() => (openMenu.notificacion = false)}
 										class={`
-                        p-1 rounded-full
-                        ${$dark ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}
-                      `}
+											p-1 rounded-full
+											${$dark ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}
+										`}
 										aria-label="Cerrar notificaciones"
 									>
 										<svg class="fill-current" width="20" height="20" viewBox="0 0 24 24">
@@ -294,21 +293,21 @@
 
 								<ul
 									class={`
-                    custom-scrollbar px-2 pt-3 flex h-[280px] flex-col overflow-y-auto border-t
-                    ${$dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}
-                  `}
+										custom-scrollbar px-2 pt-3 flex h-[280px] flex-col overflow-y-auto border-t
+										${$dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}
+									`}
 								>
 									<li>
 										<a
 											href="#"
 											class={`
-                          gap-3 p-3 rounded-lg flex
-                          ${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
-                        `}
+												gap-3 p-3 rounded-lg flex
+												${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
+											`}
 										>
 											<span class="h-10 w-10 relative z-1 block rounded-full">
 												<img
-													src="./images/user/user-02.jpg"
+													src="/images/user/user-02.jpg"
 													alt="User"
 													class="h-10 w-10 overflow-hidden rounded-full"
 												/>
@@ -319,29 +318,29 @@
 											<div class="flex-1">
 												<p
 													class={`
-                            text-sm
-                            ${$dark ? 'text-gray-300' : 'text-gray-600'}
-                          `}
+														text-sm
+														${$dark ? 'text-gray-300' : 'text-gray-600'}
+													`}
 												>
 													<span
 														class={`
-                              font-medium
-                              ${$dark ? 'text-white' : 'text-gray-800'}
-                            `}>Terry Franci</span
+																font-medium
+																${$dark ? 'text-white' : 'text-gray-800'}
+														`}>Terry Franci</span
 													>
 													requests permission to change
 													<span
 														class={`
-                              font-medium
-                              ${$dark ? 'text-white' : 'text-gray-800'}
-                            `}>Project - Nganter App</span
+																font-medium
+																${$dark ? 'text-white' : 'text-gray-800'}
+														`}>Project - Nganter App</span
 													>
 												</p>
 												<div
 													class={`
-                            text-xs gap-2 mt-1 flex items-center
-                            ${$dark ? 'text-gray-400' : 'text-gray-500'}
-                          `}
+															text-xs gap-2 mt-1 flex items-center
+															${$dark ? 'text-gray-400' : 'text-gray-500'}
+													`}
 												>
 													<span>Project</span>
 													<span class="h-1 w-1 bg-gray-400 rounded-full"></span>
@@ -354,15 +353,15 @@
 									<!-- Más elementos de notificación -->
 									<li>
 										<a
-											href="#"
+											href=""
 											class={`
-                          gap-3 p-3 rounded-lg flex
-                          ${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
-                        `}
+												gap-3 p-3 rounded-lg flex
+												${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
+											`}
 										>
 											<span class="h-10 w-10 relative z-1 block rounded-full">
 												<img
-													src="./images/user/user-03.jpg"
+													src="/images/user/user-03.jpg"
 													alt="User"
 													class="h-10 w-10 overflow-hidden rounded-full"
 												/>
@@ -372,30 +371,27 @@
 											</span>
 											<div class="flex-1">
 												<p
-													class={`
-                            text-sm
-                            ${$dark ? 'text-gray-300' : 'text-gray-600'}
-                          `}
+													class={`text-sm
+                            						${$dark ? 'text-gray-300' : 'text-gray-600'}
+                          							`}
 												>
 													<span
-														class={`
-                              font-medium
-                              ${$dark ? 'text-white' : 'text-gray-800'}
-                            `}>Alena Franci</span
+														class={`font-medium
+                              							${$dark ? 'text-white' : 'text-gray-800'}
+                            							`}>Alena Franci</span
 													>
 													requests permission to change
 													<span
 														class={`
-                              font-medium
-                              ${$dark ? 'text-white' : 'text-gray-800'}
-                            `}>Project - Nganter App</span
+                              								font-medium
+                              								${$dark ? 'text-white' : 'text-gray-800'}
+                            							`}>Project - Nganter App</span
 													>
 												</p>
 												<div
-													class={`
-                            text-xs gap-2 mt-1 flex items-center
-                            ${$dark ? 'text-gray-400' : 'text-gray-500'}
-                          `}
+													class={`text-xs gap-2 mt-1 flex items-center
+                            							${$dark ? 'text-gray-400' : 'text-gray-500'}
+                          							`}
 												>
 													<span>Project</span>
 													<span class="h-1 w-1 bg-gray-400 rounded-full"></span>
@@ -407,14 +403,13 @@
 									<li>
 										<a
 											href="#"
-											class={`
-                gap-3 p-3 rounded-lg flex
-                ${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
-              `}
+											class={`gap-3 p-3 rounded-lg flex
+            								    ${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
+              								`}
 										>
 											<span class="h-10 w-10 relative z-1 block rounded-full">
 												<img
-													src="./images/user/user-04.jpg"
+													src="/images/user/user-04.jpg"
 													alt="User"
 													class="h-10 w-10 overflow-hidden rounded-full"
 												/>
@@ -424,30 +419,26 @@
 											</span>
 											<div class="flex-1">
 												<p
-													class={`
-                  text-sm
-                  ${$dark ? 'text-gray-300' : 'text-gray-600'}
-                `}
+													class={`text-sm
+                  									${$dark ? 'text-gray-300' : 'text-gray-600'}
+                								`}
 												>
 													<span
-														class={`
-                    font-medium
-                    ${$dark ? 'text-white' : 'text-gray-800'}
-                  `}>Jocelyn Kenter</span
+														class={`font-medium
+                    									${$dark ? 'text-white' : 'text-gray-800'}
+                  								`}>Jocelyn Kenter</span
 													>
 													requests permission to change
 													<span
-														class={`
-                    font-medium
-                    ${$dark ? 'text-white' : 'text-gray-800'}
-                  `}>Project - Nganter App</span
+														class={`font-medium
+                    									${$dark ? 'text-white' : 'text-gray-800'}
+                  								`}>Project - Nganter App</span
 													>
 												</p>
 												<div
-													class={`
-                  text-xs gap-2 mt-1 flex items-center
-                  ${$dark ? 'text-gray-400' : 'text-gray-500'}
-                `}
+													class={`text-xs gap-2 mt-1 flex items-center
+                  									${$dark ? 'text-gray-400' : 'text-gray-500'}
+                								`}
 												>
 													<span>Project</span>
 													<span class="h-1 w-1 bg-gray-400 rounded-full"></span>
@@ -460,14 +451,13 @@
 									<li>
 										<a
 											href="#"
-											class={`
-                          gap-3 p-3 rounded-lg flex
-                          ${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
-                        `}
+											class={`gap-3 p-3 rounded-lg flex
+                          					${$dark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}
+                        					`}
 										>
 											<span class="h-10 w-10 relative z-1 block rounded-full">
 												<img
-													src="./images/user/user-05.jpg"
+													src="/images/user/user-05.jpg"
 													alt="User"
 													class="h-10 w-10 overflow-hidden rounded-full"
 												/>
@@ -477,30 +467,26 @@
 											</span>
 											<div class="flex-1">
 												<p
-													class={`
-                            text-sm
-                            ${$dark ? 'text-gray-300' : 'text-gray-600'}
-                          `}
+													class={`text-sm
+                            						${$dark ? 'text-gray-300' : 'text-gray-600'}
+                          							`}
 												>
 													<span
-														class={`
-                              font-medium
-                              ${$dark ? 'text-white' : 'text-gray-800'}
-                            `}>Brandon Philips</span
+														class={`font-medium
+                              							${$dark ? 'text-white' : 'text-gray-800'}
+                            							`}>Brandon Philips</span
 													>
 													requests permission to change
 													<span
-														class={`
-                              font-medium
-                              ${$dark ? 'text-white' : 'text-gray-800'}
-                            `}>Project - Nganter App</span
+														class={`font-medium
+                              							${$dark ? 'text-white' : 'text-gray-800'}
+                            							`}>Project - Nganter App</span
 													>
 												</p>
 												<div
-													class={`
-                            text-xs gap-2 mt-1 flex items-center
-                            ${$dark ? 'text-gray-400' : 'text-gray-500'}
-                          `}
+													class={`text-xs gap-2 mt-1 flex items-center
+                            							${$dark ? 'text-gray-400' : 'text-gray-500'}
+                          							`}
 												>
 													<span>Project</span>
 													<span class="h-1 w-1 bg-gray-400 rounded-full"></span>
@@ -514,10 +500,9 @@
 
 								<a
 									href="/notifications"
-									class={`
-                      text-sm mt-2 rounded-lg p-3 font-medium flex justify-center border
-                      ${$dark ? 'bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'}
-                    `}
+									class={`text-sm mt-2 rounded-lg p-3 font-medium flex justify-center border
+                      					${$dark ? 'bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'}
+                    				`}
 								>
 									View All Notification
 								</a>
@@ -540,7 +525,7 @@
 					>
 						<div class="flex items-center">
 							<span class="mr-3 h-11 w-11 overflow-hidden rounded-full">
-								<img src="./images/user/owner.jpg" alt="User" />
+								<img src="/images/user/owner.jpg" alt="User" />
 							</span>
 
 							<p
@@ -574,11 +559,11 @@
 					{#if openMenu.usuario}
 						<div
 							class={`right-0 rounded-2xl p-3 absolute mt-[17px] flex w-[260px] flex-col border
-                          ${
-														$dark
-															? 'bg-gray-900 border-gray-800 text-gray-300'
-															: 'bg-white border-gray-200 text-gray-500'
-													}`}
+                        ${
+													$dark
+														? 'bg-gray-900 border-gray-800 text-gray-300'
+														: 'bg-white border-gray-200 text-gray-500'
+												}`}
 						>
 							<!-- Datos usuario -->
 							<div>

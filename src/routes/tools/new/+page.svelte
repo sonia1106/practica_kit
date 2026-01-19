@@ -135,7 +135,7 @@
 	<div class="sm:flex-row gap-4 pb-6 flex flex-col justify-between">
 		<h2 class="text-lg font-bold">Monitoreo Movimientos de Inventario</h2>
 		<span class="text-sm text-gray-500">
-			Herramientas/
+			Herramientas/ Inventario/
 			<a
 				href="/tools/new"
 				class={`
