@@ -161,14 +161,14 @@
 				</svg>
 			</div>
 			<div
-				class={`gap-0 text-xs font-semibold grid w-full min-w-[1000px] grid-cols-9 border uppercase
+				class={`gap-0 text-xs font-semibold grid w-full min-w-[1000px] grid-cols-8 border uppercase rounded-md
                 ${$dark ? 'border-gray-600 text-gray-400' : 'border-gray-400 text-gray-500'}
             `}
 			>
 				<input
 					type="number"
 					placeholder="Número"
-					class={`px-2 py-1 col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					class={`px-2 py-1 col-span-2 border-r outline-none rounded-l-md ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
@@ -193,7 +193,7 @@
 				<input
 					type="text"
 					placeholder="Usuario"
-					class={`px-2 py-1 outline-none ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
+					class={`px-2 py-1 outline-none rounded-r-md ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
 				/>
 			</div>
 		</div>
