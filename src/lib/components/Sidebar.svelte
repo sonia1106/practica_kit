@@ -272,19 +272,19 @@
             {#if openMenu.ventas}
               <div class="ml-4 space-y-1">
                 <SidebarLink
-                href="/tools/dosificaccion"
+                href="/sales/dosage"
                 label="Dosificación"
                 />
                 <SidebarLink
-                href="/herramienta/factManual"
+                href="/sales/manual invoice"
                 label="Factura Manual"
                 />
                 <SidebarLink
-                href="/herramienta/mantenimiento"
+                href="/sales/maintenance"
                 label="Mantenimiento"
                 />
                 <SidebarLink
-                href="/herramienta/importar_clientes"
+                href="/sales/import client"
                 label="Importar Clientes"
                 />
               </div>

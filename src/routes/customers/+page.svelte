@@ -140,6 +140,46 @@
 				Agregar
 			</button>
 		</div>
+				<!-- Search / Filter Row Placeholder -->
+		<div class="gap-2 mt-6 pb-6 flex items-center overflow-x-auto">
+			<div class="text-gray-600">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class={`h-6 w-6 ${$dark ? 'text-gray-400' : 'text-gray-600'}`}
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+					/>
+				</svg>
+			</div>
+			<div
+				class={`gap-0 text-xs font-semibold  border uppercase
+                ${$dark ? 'border-gray-600 text-gray-400' : 'border-gray-400 text-gray-500'}
+            `}
+			>
+				<input
+					type="text"
+					placeholder="NIT."
+					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+				/>
+				<input
+					type="text"
+					placeholder="Razon Social"
+					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+				/>
+				<input
+					type="text"
+					placeholder="Grupo"
+					class={`px-2 py-1 outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+				/>
+			</div>
+		</div>
 
 		<div
 			class={`rounded-xl overflow-x-auto border
