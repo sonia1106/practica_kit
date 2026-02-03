@@ -7,7 +7,7 @@
 	import { clientes } from '$lib/stores/clientes';
 	import { dark, modalState, openModal, closeModal, handleModalKeyDown } from '$lib/stores/theme';
 
-	import { obtenerClientes, crearCliente, actualizarCliente } from '$lib/services/clientes.service';
+	import { obtenerClientes, crearCliente, actualizarCliente } from '$lib/services/cliente2.service';
 
 	let listaClientes: Cliente[] = [];
 
@@ -135,12 +135,12 @@
 					resetForm();
 					openModal('CREATE');
 				}}
-				class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+				class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
 			>
-				Agregar
+				+ Agregar
 			</button>
 		</div>
-				<!-- Search / Filter Row Placeholder -->
+		<!-- Search / Filter Row Placeholder -->
 		<div class="gap-2 mt-6 pb-6 flex items-center overflow-x-auto">
 			<div class="text-gray-600">
 				<svg
@@ -159,24 +159,24 @@
 				</svg>
 			</div>
 			<div
-				class={`gap-0 text-xs font-semibold  border uppercase rounded-md grid grid-cols-6
+				class={`gap-0 text-xs font-semibold  rounded-md grid grid-cols-6 border uppercase
                 ${$dark ? 'border-gray-600 text-gray-400' : 'border-gray-400 text-gray-500'}
             `}
 			>
 				<input
 					type="text"
 					placeholder="NIT."
-					class={`px-2 py-1 col-span-2 border-r outline-none rounded-l-md  ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					class={`px-2 py-1 rounded-l-md col-span-2 border-r outline-none  ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="Razon Social"
-					class={`px-2 py-1 col-span-2 border-l border-r outline-none  ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					class={`px-2 py-1 col-span-2 border-r border-l outline-none  ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="Grupo"
-					class={`px-2 py-1 col-span-2 outline-none rounded-r-md border-l ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					class={`px-2 py-1 rounded-r-md col-span-2 border-l outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 			</div>
 		</div>
@@ -372,7 +372,7 @@
 					role="document"
 				>
 					<!-- Header -->
-					<h3 class="text-lg font-semibold mb-6">Editar cliente</h3>
+					<h3 class="text-lg font-semibold mb-6">Agregar cliente</h3>
 
 					<!-- Grid -->
 					<div class="md:grid-cols-2 gap-4 grid grid-cols-1">
@@ -389,12 +389,11 @@
 								id="nit"
 								type="number"
 								bind:value={form.nit}
-								class={`rounded-md px-3 py-2 text-sm w-full border
-                  focus:ring-2 focus:outline-none
+								class={`rounded-lg px-4 py-2.5 text-sm focus:ring-opacity-50 w-full border transition-all duration-200 outline-none focus:ring-2
                   ${
 										$dark
-											? 'bg-gray-900 border-gray-700 text-gray-200 focus:ring-blue-500'
-											: 'bg-white border-gray-300 text-gray-700 focus:ring-blue-500'
+											? 'bg-gray-900 border-gray-700 text-gray-200 focus:ring-blue-500 focus:border-blue-500'
+											: 'bg-white border-gray-300 text-gray-700 focus:ring-blue-500 focus:border-blue-500'
 									}
                 `}
 							/>
@@ -563,7 +562,7 @@
 							class="px-4 py-2 rounded-md text-sm bg-blue-600 text-white hover:bg-blue-700
                 focus:ring-blue-500 focus:ring-2 focus:outline-none"
 						>
-							Guardar cambios
+							Guardar cliente
 						</button>
 					</div>
 				</div>
@@ -587,17 +586,17 @@
 			>
 				<h3 class="text-lg font-semibold mb-4">Confirmar eliminación</h3>
 
-				<p class="text-sm mb-6">
+				<p class="text-sm mb-8">
 					¿Deseas eliminar el cliente
 					<strong>{$modalState.data.razon_social}</strong>?
 				</p>
 
-				<div class="gap-3 flex justify-end">
+				<div class="gap-4 mt-6 pt-4 border-gray-100 dark:border-gray-700 flex justify-end border-t">
 					<button
 						type="button"
 						on:click={closeModal}
-						class={`px-4 py-2 rounded-md text-sm
-                ${$dark ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}
+						class={`px-6 py-2.5 rounded-lg text-sm font-medium transition-colors
+                ${$dark ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
               `}
 					>
 						Cancelar
@@ -605,8 +604,7 @@
 
 					<button
 						on:click={confirmarEliminacion}
-						class="px-4 py-2 rounded-md text-sm bg-red-600 text-white hover:bg-red-700
-                    focus:ring-red-500 focus:ring-2 focus:outline-none"
+						class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-8 rounded-lg shadow-lg hover:shadow-red-500/30 hover:-translate-y-0.5 transform transition-all"
 					>
 						Eliminar
 					</button>
@@ -628,8 +626,8 @@
 						}
           `}
 			>
-				<div class="mb-6 flex items-center justify-between">
-					<h3 class="text-lg font-semibold">Vehículos del cliente</h3>
+				<div class="mb-8 pb-4 border-gray-200 dark:border-gray-700 border-b flex items-center justify-between">
+					<h3 class="text-2xl font-bold tracking-tight">Vehículos del cliente</h3>
 					<button
 						on:click={closeModal}
 						aria-label="Cerrar"

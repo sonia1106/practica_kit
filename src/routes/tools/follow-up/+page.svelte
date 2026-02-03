@@ -142,7 +142,7 @@
 			</div>
 		</div>
 
-				<!-- Search / Filter Row Placeholder -->
+		<!-- Search / Filter Row Placeholder -->
 		<div class="gap-2 mt-6 pb-6 flex items-center overflow-x-auto">
 			<div class="text-gray-600">
 				<svg
@@ -161,14 +161,14 @@
 				</svg>
 			</div>
 			<div
-				class={`gap-0 text-xs font-semibold grid w-full min-w-[1000px] grid-cols-8 border uppercase rounded-md
+				class={`gap-0 text-xs font-semibold rounded-md grid w-full min-w-[1000px] grid-cols-8 border uppercase
                 ${$dark ? 'border-gray-600 text-gray-400' : 'border-gray-400 text-gray-500'}
             `}
 			>
 				<input
 					type="number"
 					placeholder="Número"
-					class={`px-2 py-1 col-span-2 border-r outline-none rounded-l-md ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					class={`px-2 py-1 rounded-l-md col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
@@ -193,7 +193,7 @@
 				<input
 					type="text"
 					placeholder="Usuario"
-					class={`px-2 py-1 outline-none rounded-r-md ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
+					class={`px-2 py-1 rounded-r-md outline-none ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
 				/>
 			</div>
 		</div>
@@ -368,14 +368,20 @@
 
 <!-- MODAL DETALLE -->
 {#if $modalState.view === 'DETALLE' && $modalState.data}
-	<div class="inset-0 bg-black/50 backdrop-blur-sm fixed z-50 flex items-center justify-center">
+	<div
+		class="inset-0 bg-black/60 fixed z-50 flex items-center justify-center"
+		role="dialog"
+		aria-modal="true"
+	>
 		<div
 			class={`max-w-4xl rounded-lg p-6 shadow-xl max-h-[90vh] w-full overflow-y-auto
     ${$dark ? 'bg-gray-800 text-gray-200 border-gray-700 border' : 'bg-white text-gray-700'}
   `}
 		>
-			<div class="mb-4 pb-2 border-gray-500/30 flex items-center justify-between border-b">
-				<h3 class="text-xl font-bold">
+			<div
+				class="mb-8 pb-4 border-gray-200 dark:border-gray-700 flex items-center justify-between border-b"
+			>
+				<h3 class="text-2xl font-bold tracking-tight">
 					Detalle de Movimiento #{$modalState.data.id_transaccion}
 				</h3>
 				<button on:click={closeModal} class="text-2xl hover:text-red-500">&times;</button>
@@ -444,10 +450,12 @@
 				</table>
 			</div>
 
-			<div class="mt-6 flex justify-end">
+			<div class="gap-4 mt-8 pt-4 border-gray-100 dark:border-gray-700 flex justify-end border-t">
 				<button
 					on:click={closeModal}
-					class="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600 transition"
+					class={`px-6 py-2.5 rounded-lg text-sm font-medium transition-colors
+              ${$dark ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
+            `}
 				>
 					Cerrar
 				</button>
@@ -458,7 +466,11 @@
 
 <!-- MODAL EDITAR -->
 {#if $modalState.view === 'EDITAR' && $modalState.data}
-	<div class="inset-0 bg-black/50 backdrop-blur-sm fixed z-50 flex items-center justify-center">
+	<div
+		class="inset-0 bg-black/60 fixed z-50 flex items-center justify-center"
+		role="dialog"
+		aria-modal="true"
+	>
 		<div
 			class={`max-w-lg rounded-lg p-6 shadow-xl w-full
     ${$dark ? 'bg-gray-800 text-gray-200 border-gray-700 border' : 'bg-white text-gray-700'}
@@ -470,34 +482,48 @@
 
 			<div class="space-y-4">
 				<div>
-					<label for="edit-referencia" class="text-sm font-medium mb-1 block">Referencia</label>
+					<label
+						for="edit-referencia"
+						class={`text-xs font-bold mb-2 block uppercase ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
+						>Referencia</label
+					>
 					<input
 						id="edit-referencia"
 						bind:value={$modalState.data.referencia}
-						class="input px-3 py-2 rounded w-full border bg-transparent"
+						class={`rounded-lg px-4 py-2.5 text-sm focus:ring-opacity-50 w-full border transition-all duration-200 outline-none focus:ring-2
+                ${$dark ? 'bg-gray-900 border-gray-700 text-gray-200 focus:ring-blue-500 focus:border-blue-500' : 'bg-white border-gray-300 text-gray-700 focus:ring-blue-500 focus:border-blue-500'}
+              `}
 					/>
 				</div>
 				<div>
-					<label for="edit-usuario" class="text-sm font-medium mb-1 block">Usuario</label>
+					<label
+						for="edit-usuario"
+						class={`text-xs font-bold mb-2 block uppercase ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
+						>Usuario</label
+					>
 					<input
 						id="edit-usuario"
 						bind:value={$modalState.data.usuario}
-						class="input px-3 py-2 rounded w-full border bg-transparent"
+						class={`rounded-lg px-4 py-2.5 text-sm focus:ring-opacity-50 w-full border transition-all duration-200 outline-none focus:ring-2
+                ${$dark ? 'bg-gray-900 border-gray-700 text-gray-200 focus:ring-blue-500 focus:border-blue-500' : 'bg-white border-gray-300 text-gray-700 focus:ring-blue-500 focus:border-blue-500'}
+              `}
 					/>
 				</div>
 				<!-- Add more fields as needed -->
 			</div>
 
-			<div class="gap-2 mt-6 flex justify-end">
+			<div class="gap-4 mt-8 pt-4 border-gray-100 dark:border-gray-700 flex justify-end border-t">
 				<button
 					on:click={closeModal}
-					class="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600"
+					class={`px-6 py-2.5 rounded-lg text-sm font-medium transition-colors
+              ${$dark ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
+            `}
 				>
 					Cancelar
 				</button>
 				<button
 					on:click={guardarEdicion}
-					class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+					class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-8 rounded-lg shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transform transition-all"
 				>
 					Guardar
 				</button>

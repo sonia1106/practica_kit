@@ -15,6 +15,7 @@ export interface ClienteForm {
   direccion: string;
   telefono: string;
   grupo?: string;
+  id_grupo_clientes?: number;
   contacto?: string;
 }
 

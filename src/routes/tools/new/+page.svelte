@@ -403,7 +403,7 @@
 					<div class="flex items-end">
 						<button
 							on:click={agregarItem}
-							class="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 w-full transition-colors"
+							class="px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium hover:bg-green-700 w-full transition-colors"
 						>
 							+ Agregar
 						</button>
@@ -487,7 +487,7 @@
 			<div class="mt-4 flex justify-end">
 				<button
 					on:click={guardarMovimiento}
-					class="px-6 py-2 rounded-md bg-green-600 text-white font-medium hover:bg-green-700 shadow-lg transition-colors"
+					class="px-6 py-2 rounded-md bg-orange-400 text-white font-medium hover:bg-orange-500 shadow-lg transition-colors"
 				>
 					Guardar Movimiento
 				</button>
