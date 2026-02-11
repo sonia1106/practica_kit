@@ -1,9 +1,3 @@
-import type { PageLoad } from "./$types";
-import type { Servicio } from "$lib/types";
-
-export const load: PageLoad = async ({ fetch }) => {
-  const res = await fetch("/api/servicios");
-  const servicios: Servicio[] = await res.json();
-
-  return { servicios };
-};
+// This file is no longer needed as products are loaded directly in the component
+// using onMount() instead of SvelteKit's load function
+export const ssr = false;

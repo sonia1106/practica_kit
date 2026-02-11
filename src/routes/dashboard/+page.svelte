@@ -1,145 +1,151 @@
 <script lang="ts">
-  export let data;
-  interface Servicio {
-    id: number;
-    nombre: string;
-    precio: number;
-  }
-  let servicios: Servicio[] = data?.servicios || [];
-  let nombre: string = "";
-  let precio: number | string = "";
-  let edit: Servicio | null = null;
+	import { onMount } from 'svelte';
+	// Using MOCK service for local development (no backend API needed)
+	import { obtenerPrecios } from '$lib/services/precios.service.mock';
+	import type { Precio } from '$lib/types/precios';
+	import { dark } from '$lib/stores/theme';
 
-  async function recargar() {
-    const res = await fetch("/api/servicios");
-    servicios = await res.json() as Servicio[];
-  }
+	let loading = true;
+	let error = '';
+	let precios: Precio[] = [];
 
-  async function agregar() {
-    if (!nombre || !precio) {
-      alert("Nombre y precio son obligatorios");
-      return;
-    }
-    await fetch("/api/servicios", {
-      method: "POST",
-      body: JSON.stringify({ nombre, precio: Number(precio) }),
-      headers: { "Content-Type": "application/json" }
-    });
-    nombre = "";
-    precio = "";
-    await recargar();
-  }
-
-  function seleccionar(servicio: Servicio) {
-    edit = { ...servicio };
-  }
-
-  async function guardar() {
-    if (!edit) return;
-    await fetch(`/api/servicios/${edit.id}`, {
-      method: "PUT",
-      body: JSON.stringify(edit),
-      headers: { "Content-Type": "application/json" }
-    });
-    edit = null;
-    await recargar();
-  }
-
-  async function eliminar(id: number) {
-    await fetch(`/api/servicios/${id}`, {
-      method: "DELETE"
-    });
-    await recargar();
-  }
+	onMount(async () => {
+		try {
+			precios = await obtenerPrecios();
+			loading = false;
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error al cargar precios';
+			loading = false;
+			console.error('Error loading prices:', e);
+		}
+	});
 </script>
 
-<div class="p-6 w-full overflow-x-auto">
-  <h2 class="text-2xl font-bold mb-4">Agregar Servicios</h2>
-  <div class="mb-6 flex flex-wrap gap-2 sm:flex-row">
-    <input
-      class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      placeholder="Nombre"
-      bind:value={nombre}
-    />
+<section
+	class={`
+      p-4 md:p-6 min-h-screen w-full
+      ${$dark ? 'bg-gray-900 text-gray-200' : 'bg-white text-gray-700'}
+    `}
+>
+	<div class="sm:flex-row gap-4 flex flex-col justify-between">
+		<h2 class="text-lg font-bold">Precios de Productos</h2>
+		<span class="text-sm text-gray-500">
+			Dashboard/
+			<a
+				href="/dashboard"
+				class={`
+          ${$dark ? 'text-gray-300 hover:text-gray-100' : 'text-gray-700 hover:text-gray-800'}
+        `}
+			>
+				Precios
+			</a>
+		</span>
+	</div>
 
-    <input
-      type="number"
-      class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      placeholder="Precio"
-      bind:value={precio}
-    />
+	<div
+		class={`rounded-lg mt-6 p-4 md:p-6 border
+        ${
+					$dark
+						? 'bg-gray-800 border-gray-700 text-white'
+						: 'bg-white border-gray-200 text-gray-700'
+				}`}
+	>
+		<div class="mb-4 -mt-2 flex items-center justify-between">
+			<h3 class="text-md font-medium">Lista de Precios</h3>
+			<button
+				class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+			>
+				Actualizar Precios
+			</button>
+		</div>
 
-    <button
-      class="w-full sm:w-auto px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      on:click={agregar}
-    >
-      Agregar
-    </button>
-  </div>
+		{#if loading}
+			<div class="py-12 flex items-center justify-center">
+				<div class={$dark ? 'text-gray-400' : 'text-gray-600'}>Cargando precios...</div>
+			</div>
+		{:else if error}
+			<div
+				class={`p-4 rounded-lg border ${$dark ? 'bg-red-900/20 border-red-800 text-red-400' : 'bg-red-50 border-red-200 text-red-700'}`}
+			>
+				{error}
+			</div>
+		{:else if precios.length === 0}
+			<div
+				class={`p-4 rounded-lg border ${$dark ? 'bg-yellow-900/20 border-yellow-800 text-yellow-400' : 'bg-yellow-50 border-yellow-200 text-yellow-700'}`}
+			>
+				No hay precios disponibles
+			</div>
+		{:else}
+			<div
+				class={`rounded-xl overflow-x-auto border
+        ${$dark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}
+			>
+				<table class="text-sm w-full min-w-[1000px]">
+					<thead>
+						<tr
+							class={`border-b text-center transition-colors duration-300
+                  ${$dark ? 'border-gray-600' : 'border-gray-300'}`}
+						>
+							<th
+								class={`px-6 py-3 text-xs font-medium text-left uppercase ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
+							>
+								Producto
+							</th>
+							<th
+								class={`px-6 py-3 text-xs font-medium text-left uppercase ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
+							>
+								Tipo
+							</th>
+							<th
+								class={`px-6 py-3 text-xs font-medium text-left uppercase ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
+							>
+								Precio
+							</th>
+							<th
+								class={`px-6 py-3 text-xs font-medium text-left uppercase ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
+							>
+								Fecha Actualización
+							</th>
+						</tr>
+					</thead>
 
-
-  <h2 class="text-2xl font-bold mb-4">Lista de Servicios</h2>
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-      {#each servicios as servicio, i}
-        <tr>
-          <td class="px-6 py-4 whitespace-nowrap">{i + 1}</td>
-          <td class="px-6 py-4 whitespace-nowrap">{servicio.nombre}</td>
-          <td class="px-6 py-4 whitespace-nowrap">{servicio.precio}</td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <button
-              class="text-blue-600 hover:text-blue-900 mr-2"
-              on:click={() => seleccionar(servicio)}
-            >
-              Editar
-            </button>
-            <button
-              class="text-red-600 hover:text-red-900"
-              on:click={() => eliminar(servicio.id)}
-            >
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-
-  {#if edit}
-    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-      <h2 class="font-semibold mb-2">Editar Servicio</h2>
-      <div class="flex space-x-2">
-        <input
-          class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          bind:value={edit.nombre}
-        />
-        <input
-          type="number"
-          class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          bind:value={edit.precio}
-        />
-        <button
-          class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          on:click={guardar}
-        >
-          Guardar
-        </button>
-        <button
-          class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-          on:click={() => (edit = null)}
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  {/if}
-  
-</div>
+					<tbody>
+						{#each precios as precio}
+							<tr class={`border-b last:border-0 ${$dark ? 'border-gray-600' : 'border-gray-100'}`}>
+								<td class="px-6 py-4">{precio.producto}</td>
+								<td class="px-6 py-4">
+									<span
+										class={`px-2.5 py-0.5 text-xs font-medium inline-flex items-center rounded-full ${
+											precio.tipo === 'NACIONAL'
+												? $dark
+													? 'bg-blue-900/30 text-blue-400'
+													: 'bg-blue-100 text-blue-800'
+												: $dark
+													? 'bg-purple-900/30 text-purple-400'
+													: 'bg-purple-100 text-purple-800'
+										}`}
+									>
+										{precio.tipo}
+									</span>
+								</td>
+								<td class="px-6 py-4 font-semibold">
+									{precio.precio > 0 ? precio.precio.toFixed(2) : '-'}
+								</td>
+								<td class="px-6 py-4">
+									{new Date(precio.fechaActualizacion).toLocaleString('es-BO', {
+										year: 'numeric',
+										month: '2-digit',
+										day: '2-digit',
+										hour: '2-digit',
+										minute: '2-digit',
+										second: '2-digit'
+									})}
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+	</div>
+</section>

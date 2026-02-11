@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { sidebarOpen, dark, toggleDark } from '$lib/stores/theme';
+	import { authStore } from '$lib/stores/auth';
+	import { logout } from '$lib/services/auth.service.mock';
+	import { goto } from '$app/navigation';
 
 	// Cargar tema previo
 	let notifying = true;
@@ -14,6 +17,11 @@
 
 	function toggleSidebar() {
 		sidebarOpen.update((v) => !v);
+	}
+
+	async function handleLogout() {
+		await logout();
+		goto('/');
 	}
 </script>
 
@@ -571,13 +579,13 @@
 									class={`text-sm font-medium block 
                                   ${$dark ? 'text-gray-300' : 'text-gray-700'}`}
 								>
-									Musharof Chowdhury
+									{$authStore.user?.nombre || 'Usuario'}
 								</span>
 								<span
 									class={`text-xs mt-0.5 block 
                                   ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
 								>
-									randomuser@pimjo.com
+									{$authStore.user?.usuario || 'N/A'}
 								</span>
 							</div>
 
@@ -616,7 +624,7 @@
 												fill=""
 											/>
 										</svg>
-										Edit profile
+										Editar perfil
 									</a>
 								</li>
 
@@ -650,7 +658,7 @@
 												fill=""
 											/>
 										</svg>
-										Account settings
+										Configuración de cuenta
 									</a>
 								</li>
 
@@ -684,14 +692,14 @@
 												fill=""
 											/>
 										</svg>
-										Support
+										Soporte
 									</a>
 								</li>
 							</ul>
 
 							<!-- Botón Logout -->
 							<button
-								class={`group text-sm mt-3 gap-3 rounded-lg px-3 py-2 font-medium flex items-center
+								on:click={handleLogout} class={`group text-sm mt-3 gap-3 rounded-lg px-3 py-2 font-medium flex items-center
                             ${
 															$dark
 																? 'text-gray-400 hover:bg-white/5 hover:text-gray-300'
@@ -717,7 +725,7 @@
 										fill=""
 									/>
 								</svg>
-								Sign out
+								Cerrar sesión
 							</button>
 						</div>
 					{/if}
