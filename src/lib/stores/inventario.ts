@@ -8,7 +8,7 @@ export const movimientoSeleccionadoDetalle = writable<MovimientoDetalle[]>([]);
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { obtenerMovimientoDetalle } from '$lib/services/inventario.service2';
+import { obtenerMovimientoDetalle } from '$lib/services/inventario.service';
 
 export async function descargarPDF(mov: MovimientoCabecera, idEstacion: string = '8') {
     try {

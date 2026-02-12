@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	// Using MOCK service for local development (no backend API needed)
-	import { login } from '$lib/services/auth.service.mock';
+	import { login } from '$lib/services/auth.service';
 	import { dark } from '$lib/stores/theme';
 
 	let usuario = 'admin';

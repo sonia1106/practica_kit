@@ -18,7 +18,7 @@ import {
     reporteVentas
 } from '$lib/stores/facturacion';
 
-const BASE_URL = 'http://127.0.0.1:30004';
+const BASE_URL = '/backend';
 const ESTACION_ID = '8';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
@@ -45,7 +45,7 @@ async function fetchForm<T>(url: string, formData: Record<string, any>): Promise
     try {
         const res = await fetch(url, {
             method: 'POST',
-            body: params 
+            body: params
         });
         if (!res.ok) {
             throw new Error(`API Error: ${res.status}`);
@@ -88,7 +88,7 @@ export const facturacionService = {
         });
     },
 
-  
+
     obtenerTipoPago: async () => {
         const url = `${BASE_URL}/ObtenerTipoPago/Externo/`;
         const res = await fetchJson<ApiResponse<TipoPago[]>>(url);
@@ -127,7 +127,7 @@ export const facturacionService = {
         return fetchJson<ApiResponse<Parametrica[]>>(url);
     },
 
-    obtenerDatosCliente: async (criterio: string) => { 
+    obtenerDatosCliente: async (criterio: string) => {
         const url = `${BASE_URL}/GenericosProcesosObtener/`;
         // tipo: 2, string1: criterio
         return fetchForm<ApiResponse<DatosClienteResponse>>(url, {

@@ -129,3 +129,9 @@ export interface Equipo {
     id: number;
     descripcion: string;
 }
+
+export interface Ubicacion {
+    id: number;
+    descripcion: string;
+}
+

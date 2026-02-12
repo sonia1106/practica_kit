@@ -5,14 +5,22 @@
 	import {
 		obtenerMovimientosCabecera,
 		obtenerMovimientoDetalle
-	} from '$lib/services/inventario.service2';
+	} from '$lib/services/inventario.service';
 	import type { MovimientoCabecera, MovimientoDetalle } from '$lib/types/inventario';
 
-	let ffini = new Date().toISOString().split('T')[0];
-	let ffin = new Date().toISOString().split('T')[0];
+	// Inicializar fechas con el primer y último día del mes actual
+	const date = new Date();
+	let ffini = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0];
+	let ffin = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0];
 	let idEstacion = '8';
 
-	let searchQuery = '';
+	// Filtros de búsqueda
+	let searchNumero = '';
+	let searchTipoDoc = '';
+	let searchProvDest = '';
+	let searchRef = '';
+	let searchEst = '';
+	let searchUsuario = '';
 
 	let loadingDetalle = false;
 
@@ -20,11 +28,20 @@
 	const itemsPerPage = 10;
 
 	$: filteredMovimientos = $movimientos.filter((m) => {
-		if (!searchQuery) return true;
-		return (
-			m.referencia?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			m.usuario?.toLowerCase().includes(searchQuery.toLowerCase())
-		);
+		const matchNumero = searchNumero === '' || m.id_transaccion.toString().includes(searchNumero);
+		const matchTipoDoc =
+			searchTipoDoc === '' ||
+			m.transaccion_tipo?.toLowerCase().includes(searchTipoDoc.toLowerCase());
+		const matchProvDest =
+			searchProvDest === '' ||
+			m.prov?.toLowerCase().includes(searchProvDest.toLowerCase()) ||
+			m.origen?.toLowerCase().includes(searchProvDest.toLowerCase());
+		const matchRef =
+			searchRef === '' || m.referencia?.toLowerCase().includes(searchRef.toLowerCase());
+		const matchEst = searchEst === '' || m.estado?.toLowerCase().includes(searchEst.toLowerCase());
+		const matchUsuario =
+			searchUsuario === '' || m.usuario?.toLowerCase().includes(searchUsuario.toLowerCase());
+		return matchNumero && matchTipoDoc && matchProvDest && matchRef && matchEst && matchUsuario;
 	});
 
 	$: paginatedMovimientos = filteredMovimientos.slice(
@@ -168,31 +185,37 @@
 				<input
 					type="number"
 					placeholder="Número"
+					bind:value={searchNumero}
 					class={`px-2 py-1 rounded-l-md col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="TIPO DOC."
+					bind:value={searchTipoDoc}
 					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="PROV/DEST/ORIG"
+					bind:value={searchProvDest}
 					class={`px-2 py-1 col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
-					type="number"
+					type="text"
 					placeholder="Nro. Ref"
+					bind:value={searchRef}
 					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="EST."
+					bind:value={searchEst}
 					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="Usuario"
+					bind:value={searchUsuario}
 					class={`px-2 py-1 rounded-r-md outline-none ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
 				/>
 			</div>

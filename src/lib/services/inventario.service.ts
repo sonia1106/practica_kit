@@ -16,29 +16,46 @@ interface ApiMovimientosResponse {
 }
 
 export async function obtenerItems() {
-    const data = await http<ApiResponse<Item[]>>(
-        '/ItemObtener/0/1'
-    );
-
-    items.set(data.oResultado);
+    try {
+        const data = await http<ApiResponse<Item[]>>(
+            '/ItemObtener/0/1'
+        );
+        items.set(data.oResultado || []);
+    } catch (error) {
+        console.error('Error obteniendo items:', error);
+        items.set([]);
+    }
 }
 
 export async function obtenerTanques(idEstacion: string) {
-    const data = await http<ApiResponse<Tanque[]>>(
-        `/TanqueObtener/0/${idEstacion}/`
-    );
-
-    tanques.set(data.oResultado);
+    try {
+        const data = await http<ApiResponse<Tanque[]>>(
+            `/TanqueObtener/0/${idEstacion}/`
+        );
+        tanques.set(data.oResultado || []);
+    } catch (error) {
+        console.error('Error obteniendo tanques:', error);
+        tanques.set([]);
+    }
 }
 
 export async function registrarMovimiento(payload: MovimientoRegistroDTO): Promise<void> {
-    await fetch('http://192.168.10.12:30004/MovimientoRegistro/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    });
+    console.log('📝 Intentando registrar movimiento en /MovimientoRegistro/');
+    console.log('📦 Payload:', payload);
+
+    try {
+        await http('/MovimientoRegistro/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        console.log('✅ Registro exitoso');
+    } catch (error) {
+        console.error('❌ Error en registrarMovimiento:', error);
+        throw error;
+    }
 }
 
 export async function obtenerMovimientosCabecera(ffini: string, ffin: string, idEstacion: string) {
@@ -48,26 +65,35 @@ export async function obtenerMovimientosCabecera(ffini: string, ffin: string, id
     formData.append('tipo_consulta', '1');
     formData.append('id_estacion', idEstacion);
 
-    const response = await fetch('http://192.168.10.12:30004/MovimientoObtenerCabecera/', {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        const data = await http<ApiMovimientosResponse>('/MovimientoObtenerCabecera/', {
+            method: 'POST',
+            body: formData
+        });
 
-    const data: ApiMovimientosResponse = await response.json();
-    movimientos.set(data.oResultado || []);
+        movimientos.set(data.oResultado || []);
+    } catch (error) {
+        console.error('Error obteniendo movimientos:', error);
+        movimientos.set([]);
+    }
 }
 
 export async function obtenerMovimientoDetalle(idTransaccion: number) {
     const formData = new FormData();
     formData.append('id_transaccion', idTransaccion.toString());
 
-    const response = await fetch('http://192.168.10.12:30004/MovimientoObtenerDetalle/', {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        // Usamos any para la respuesta del detalle si no tenemos interfaz estricta
+        const data = await http<any>('/MovimientoObtenerDetalle/', {
+            method: 'POST',
+            body: formData
+        });
 
-    const data = await response.json();
-
-    movimientoSeleccionadoDetalle.set(data.oResultado || []);
-    return data.oResultado || [];
+        const detalles = data.oResultado || [];
+        movimientoSeleccionadoDetalle.set(detalles);
+        return detalles;
+    } catch (error) {
+        console.error('Error obteniendo detalle:', error);
+        return [];
+    }
 }

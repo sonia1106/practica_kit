@@ -1,7 +1,7 @@
 import type { LoginResponse, User } from '$lib/types/auth';
 import { setUser } from '$lib/stores/auth';
 
-const BASE_URL = 'http://127.0.0.1:30004';
+const BASE_URL = '/backend';
 
 export async function login(usuario: string, clave: string): Promise<User> {
     const formData = new FormData();

@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { dark } from '$lib/stores/theme';
+	import { authStore } from '$lib/stores/auth'; // Importar Auth Store
 	import { facturacionService } from '$lib/services/facturacion.service';
 	import { mangueras, tiposPago, tiposConsumidor } from '$lib/stores/facturacion';
 	import type { MedicionResponse, FacturaManualPayload } from '$lib/types/facturacion';
 
-	// Los stores son importados, no hay necesidad de declaraciones locales de arreglos de datos paramétricos
-
 	// Estado del Formulario
 	let fechaFactura = new Date().toISOString().split('T')[0];
-	let idTipoPago = 1; // Por defecto EFECTIVO (1) usualmente
+	let idTipoPago = 1;
 	let nroReferencia = '';
 	let idManguera = 0;
 	let idMedicion = 0;
@@ -18,30 +17,37 @@
 	let nroFactura = 0;
 	let precio = 0;
 	let precioType: 'Nacional' | 'Internacional' = 'Nacional';
-	let idConsumidor = 1; // Por defecto MOTORIZADO
+	let idConsumidor = 1;
 	let placa = '';
 	let nit = 0;
 	let razonSocial = '';
 	let montoTotal = 0;
-	let idUsuarioAutoriza = 0; // "Vta. Autorizada Por"
+	let idUsuarioAutoriza = 0;
 	let nroHojaAutorizacion = 0;
-	let tipoAnulacion = 'Emitida en Contingencia'; // Marcado por defecto
-	let idEstacion = '8'; // Por defecto
 
-	// Computado/Derivado
+	// Estado para Anulación
+	// Mapeo: 'Anulado' (1), 'No Utilizada' (3), 'Extraviada' (2), 'Emitida en Contingencia' (5)
+	// Valores basados en códigos comunes SIAT, por defecto usamos 5 según docs manuales.
+	let tipoAnulacion = 'Emitida en Contingencia';
+
+	// Campos Internacionales
+	let nroAutorizacionInt = '';
+	let nroFacturaInt = 0;
+
+	let idEstacion = '8';
+
+	// Computados
 	$: idPrecioLista = precioType === 'Nacional' ? 1 : 2;
+	$: idPais = precioType === 'Nacional' ? 68 : 76; // 68 Bolivia, 76 Internacional (según docs)
 
-	// Lógica: Internacional fuerza Motorizado
 	$: if (precioType === 'Internacional') {
-		idConsumidor = 1; // 1 es MOTORIZADO
+		idConsumidor = 1;
 	}
 
-	// MOTORIZADO (id 1)
 	$: showPlaca = idConsumidor === 1;
 
 	onMount(async () => {
 		try {
-			// Las llamadas al servicio actualizan los stores
 			await Promise.all([
 				facturacionService.obtenerMangueras(idEstacion),
 				facturacionService.obtenerTipoPago(),
@@ -52,7 +58,6 @@
 		}
 	});
 
-	// Lógica: Obtener Precio
 	async function updatePrecio() {
 		if (idManguera && fechaFactura) {
 			try {
@@ -69,12 +74,11 @@
 			}
 		}
 	}
-	// Reaccionar a cambios
+
 	$: if (idManguera || fechaFactura || precioType) {
 		updatePrecio();
 	}
 
-	// Lógica: Obtener Medicion
 	async function cargarMediciones() {
 		if (!idManguera || !fechaFactura) {
 			alert('Seleccione Manguera y Fecha');
@@ -93,7 +97,6 @@
 		}
 	}
 
-	// Lógica: Buscar Cliente (por Placa o NIT)
 	async function buscarCliente() {
 		const criterio = placa || String(nit);
 		if (!criterio || criterio === '0') return;
@@ -109,12 +112,34 @@
 		}
 	}
 
-	// Lógica: Registrar
+	function obtenerCodigoAnulacion(tipo: string): number {
+		switch (tipo) {
+			case 'Anulado':
+				return 1;
+			case 'Extraviada':
+				return 2;
+			case 'No Utilizada':
+				return 3;
+			case 'Emitida en Contingencia':
+				return 5;
+			default:
+				return 5;
+		}
+	}
+
 	async function registrar(anulada = false) {
 		if (!nroFactura) {
 			alert('Ingrese Nro Factura');
 			return;
 		}
+
+		// Determinar tipo de anulación real
+		// Si se presiona boton "Anulada", forzamos tipo 1 (Anulado) o usamos el selector?
+		// La documentación dice "tipoAnulacion: 5" para registrar factura manual standard.
+		// Si es anulada, asumiremos el valor del selector o contingencia.
+		const codigoAnulacion = obtenerCodigoAnulacion(tipoAnulacion);
+
+		const userId = $authStore.user?.id || 46; // Usar ID de usuario real o fallback 46
 
 		const payload: FacturaManualPayload = {
 			fecha_venta: fechaFactura,
@@ -124,18 +149,18 @@
 			id_manguera: idManguera,
 			nit: nit,
 			nombre_factura: razonSocial,
-			id_item: 2,
+			id_item: 2, // Hardcoded en ejemplo
 			precio: precio,
 			nro_factura: nroFactura,
-			id_pais: 68,
+			id_pais: idPais,
 			id_padre: '',
-			id_usuario: 1,
-			nro_autorizacionInt: '',
-			nro_facturaInt: 0,
+			id_usuario: userId,
+			nro_autorizacionInt: precioType === 'Internacional' ? nroAutorizacionInt : '',
+			nro_facturaInt: precioType === 'Internacional' ? nroFacturaInt : 0,
 			monto_total: montoTotal,
 			id_mediciones: idMedicion,
 			autoriza: 0,
-			tipoAnulacion: 5,
+			tipoAnulacion: codigoAnulacion,
 			tipovale: 2,
 			id_estacion: parseInt(idEstacion),
 			tipo_int: 2,
@@ -146,10 +171,15 @@
 			id_transaccion: 0
 		};
 
+		console.log('📦 Payload Factura Manual:', payload);
+
 		try {
 			const res = await facturacionService.registrarFacturaManual(payload);
 			if (res.IntCodigo === 1) {
 				alert('Registro Exitoso');
+				// Resetear valores clave
+				nroFactura = 0;
+				montoTotal = 0;
 			} else {
 				alert('Error: ' + res.StrMensaje);
 			}
@@ -184,9 +214,7 @@
        ${$dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}
    `}
 	>
-		<h3	 class="text-md text-lg font-medium mb-6">
-			Registro de Facturas Manuales
-		</h3>
+		<h3 class="text-md text-lg font-medium mb-6">Registro de Facturas Manuales</h3>
 
 		<div class="gap-y-4 gap-x-6 text-sm grid grid-cols-12 items-center">
 			<!-- Fecha -->
@@ -344,6 +372,35 @@
 					<span class={`${$dark ? 'text-gray-300' : 'text-gray-600'}`}>Internacional</span>
 				</label>
 			</div>
+
+			<!-- Campos Internacionales (Condicional) -->
+			{#if precioType === 'Internacional'}
+				<div class={`font-bold col-span-2 text-right ${$dark ? 'text-gray-200' : 'text-gray-700'}`}>
+					Nro. Autorización Int.:
+				</div>
+				<div class="col-span-5">
+					<input
+						type="text"
+						bind:value={nroAutorizacionInt}
+						class={`rounded px-3 py-1.5 focus:border-blue-400 w-full border focus:outline-none
+                        ${$dark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-white border-gray-300'}
+                    `}
+					/>
+				</div>
+
+				<div class={`font-bold col-span-2 text-right ${$dark ? 'text-gray-200' : 'text-gray-700'}`}>
+					Nro. Factura Int.:
+				</div>
+				<div class="col-span-2">
+					<input
+						type="number"
+						bind:value={nroFacturaInt}
+						class={`rounded px-3 py-1.5 focus:border-blue-400 w-full border focus:outline-none
+                        ${$dark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-white border-gray-300'}
+                    `}
+					/>
+				</div>
+			{/if}
 
 			<!-- Consumidor -->
 			<div class={`font-bold col-span-2 text-right ${$dark ? 'text-gray-200' : 'text-gray-700'}`}>

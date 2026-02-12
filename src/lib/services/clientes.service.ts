@@ -27,40 +27,38 @@ export async function obtenerClientePorId(id: number): Promise<Cliente> {
 }
 
 export async function crearCliente(form: ClienteForm): Promise<void> {
-  const payload: ClienteOperacionDTO = {
-    id_clientes: 0,
-    razon_social: form.razon_social,
-    nit: Number(form.nit),
-    direccion: form.direccion,
-    telefono: form.telefono,
-    contacto: form.contacto,
-    id_grupo_clientes: 0,
-    tipo: 1
-  };
+  const formData = new FormData();
+  formData.append('id_clientes', '0');
+  formData.append('razon_social', form.razon_social);
+  formData.append('nit', String(form.nit));
+  formData.append('direccion', form.direccion);
+  formData.append('telefono', form.telefono);
+  formData.append('contacto', form.contacto || '');
+  formData.append('id_grupo_clientes', '0');
+  formData.append('tipo', '1');
 
-  await fetch('http://192.168.10.12:30004/ClienteOperaciones', {
+  await http('/ClienteOperaciones', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: formData
   });
 
   await obtenerClientes();
 }
 
 export async function actualizarCliente(id: number, form: ClienteForm): Promise<void> {
-  const payload: ClienteOperacionDTO = {
-    id_clientes: id,
-    razon_social: form.razon_social,
-    nit: Number(form.nit),
-    direccion: form.direccion,
-    telefono: form.telefono,
-    contacto: form.contacto,
-    id_grupo_clientes: 0,
-    tipo: 2
-  };
+  const formData = new FormData();
+  formData.append('id_clientes', String(id));
+  formData.append('razon_social', form.razon_social);
+  formData.append('nit', String(form.nit));
+  formData.append('direccion', form.direccion);
+  formData.append('telefono', form.telefono);
+  formData.append('contacto', form.contacto || '');
+  formData.append('id_grupo_clientes', '0');
+  formData.append('tipo', '3'); // 3 = Modificación según docs de estructura
 
-  await fetch('http://192.168.10.12:30004/ClienteOperaciones', {
+  await http('/ClienteOperaciones', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: formData
   });
 
   await obtenerClientes();

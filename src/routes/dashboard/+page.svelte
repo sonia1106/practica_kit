@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	// Using MOCK service for local development (no backend API needed)
-	import { obtenerPrecios } from '$lib/services/precios.service.mock';
+	import { obtenerPrecios } from '$lib/services/precios.service';
 	import type { Precio } from '$lib/types/precios';
 	import { dark } from '$lib/stores/theme';
 

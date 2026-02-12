@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { dark } from '$lib/stores/theme';
+	import { authStore } from '$lib/stores/auth';
 	import { clientes } from '$lib/stores/clientes';
 	import { obtenerClientes } from '$lib/services/clientes.service';
 	import { items, tanques } from '$lib/stores/inventario';
@@ -8,7 +9,7 @@
 		obtenerItems,
 		obtenerTanques,
 		registrarMovimiento
-	} from '$lib/services/inventario.service2';
+	} from '$lib/services/inventario.service';
 	import type { ProductoMovimientoDTO, MovimientoRegistroDTO } from '$lib/types/inventario';
 
 	let tipoDocumentoSeleccionado = '';
@@ -21,13 +22,13 @@
 	const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
 	let fechaDespacho = localDate;
-	let nroDespacho = '';
+	let nroDespacho = Math.floor(Math.random() * 10000).toString();
 	let nroOrden = '';
 	let placaCisterna = '';
 	let conductor = '';
 	let volumenPlanta = '';
-	let nroFactura = '';
-	let nroAutorizacion = '';
+	let nroFactura = Math.floor(Math.random() * 10000).toString();
+	let nroAutorizacion = Math.floor(Math.random() * 10000).toString();
 	let codigoControl = '';
 
 	let fechaRecepcion = localDate;
@@ -83,13 +84,20 @@
 			return;
 		}
 
+		// Validar usuario
+		const userId = $authStore.user?.id || 46;
+		console.log('👤 ID Usuario usado:', userId);
+
+		// Generar identificadores aleatorios para asegurar unicidad en pruebas
+		const randomId = Math.floor(Math.random() * 100000).toString();
+
 		const payload: MovimientoRegistroDTO = {
 			bancarizacion: '',
-			codigo_control: codigoControl,
-			conductor: conductor,
+			codigo_control: codigoControl || 'S/N',
+			conductor: conductor || 'TEST',
 			destino: estacion.split(' ').join('+'),
-			fecha_factura: fechaDespacho,
-			fecha_venta: fechaRecepcion,
+			fecha_factura: fechaDespacho, // YYYY-MM-DD
+			fecha_venta: fechaRecepcion, // YYYY-MM-DD
 			grupoProducto: 1,
 			id_antena: 0,
 			id_autorizacion: 0,
@@ -98,23 +106,32 @@
 			id_estacion: idEstacion,
 			id_liquidacion: 0,
 			id_transaccion_tipo: '2',
-			id_usuario: 46,
+			id_usuario: 46, // HARDCODED 46
 			monto_total: totalGeneral,
-			nro_autorizacion: nroAutorizacion,
-			nro_despacho: nroDespacho,
-			nro_factura: nroFactura,
-			nro_orden: nroOrden,
+			nro_autorizacion: nroAutorizacion || randomId,
+			nro_despacho: nroDespacho || randomId,
+			nro_factura: nroFactura || randomId,
+			nro_orden: nroOrden || randomId,
 			nro_trans_banco: '',
 			numero: '',
-			observaciones: 'REGISTRO MANUAL',
-			placa_cisterna: placaCisterna,
-			precintos: '',
-			productos: movimientoItems,
+			observaciones: 'SOLO_PRUEBA_HARDCODED_USER_46',
+			placa_cisterna: placaCisterna || 'TEST-999',
+			precintos: 'S/N',
+			productos: movimientoItems.map((item) => ({
+				...item,
+				// Asegurar que sean strings si el DTO lo pide
+				cantidad: item.cantidad.toString(),
+				id: item.id.toString(),
+				id_tanque: item.id_tanque.toString(),
+				precio: item.precio.toString()
+			})),
 			tipo: '1',
 			tipo_documento: 0,
 			tipo_emisor: 1,
-			volumen_planta: volumenPlanta
+			volumen_planta: volumenPlanta || '0'
 		};
+
+		console.log('📦 Payload JSON:', JSON.stringify(payload, null, 2));
 
 		try {
 			await registrarMovimiento(payload);

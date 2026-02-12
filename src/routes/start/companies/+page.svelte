@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	// Removed separate import of dark
 	import {
 		obtenerEmpresa,
 		obtenerEstaciones,
@@ -28,7 +27,7 @@
 		eliminarManguera,
 		obtenerTanques,
 		type Ubicacion
-	} from '$lib/services/structure.mock.ts';
+	} from '$lib/services/structure.service';
 	import { registrarEstructura } from '$lib/services/structure.service';
 	import { modalState, openModal, closeModal, handleModalKeyDown, dark } from '$lib/stores/theme';
 	import type {
@@ -83,7 +82,6 @@
 	let newUbicacionName: string = ''; // For adding new location
 
 	// Modal State
-	// let showEmpresaModal: boolean = false; // Removed in favor of global store
 	const defaultEmpresaForm: Empresa = {
 		id: 0,
 		descripcion: '',
@@ -97,7 +95,6 @@
 
 	let isEditing: boolean = false;
 
-	// React to modal state changes
 	$: if ($modalState.view === 'empresa') {
 		const data = $modalState.data;
 		if (data && data.isEditing && data.company) {
@@ -722,15 +719,18 @@
 						>
 							<option value={0}>Seleccione...</option>
 							{#each empresas as item}
-								<option value={item.id}>{item.razon_social}</option>
+								<option value={item.id}>{item.descripcion}</option>
 							{/each}
 						</select>
 					</div>
 					<!-- Actions -->
 					<div class="gap-1 flex shrink-0">
+						<!-- Botón Agregar - Deshabilitado: API no soporta EmpresaOperaciones -->
 						<button
-							class="text-green-500 hover:text-green-700 transition"
-							aria-label="+ Agregar"
+							class="text-green-500 cursor-not-allowed opacity-50 transition"
+							aria-label="+ Agregar (No disponible)"
+							title="Funcionalidad no disponible - El API no soporta crear empresas"
+							disabled
 							on:click={openCreateEmpresa}
 						>
 							<svg
@@ -744,12 +744,13 @@
 								<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 							</svg>
 						</button>
+						<!-- Botón Editar - Deshabilitado: API no soporta EmpresaOperaciones -->
 						<button
-							class="text-blue-500 hover:text-blue-700 transition"
-							aria-label="Editar"
+							class="text-blue-500 cursor-not-allowed opacity-50 transition"
+							aria-label="Editar (No disponible)"
+							title="Funcionalidad no disponible - El API no soporta editar empresas"
+							disabled
 							on:click={openEditEmpresa}
-							disabled={selectedEmpresa === 0}
-							class:opacity-50={selectedEmpresa === 0}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -766,12 +767,13 @@
 								/>
 							</svg>
 						</button>
+						<!-- Botón Eliminar - Deshabilitado: API no soporta EmpresaOperaciones -->
 						<button
-							class="text-red-500 hover:text-red-700 transition"
-							aria-label="Eliminar"
+							class="text-red-500 cursor-not-allowed opacity-50 transition"
+							aria-label="Eliminar (No disponible)"
+							title="Funcionalidad no disponible - El API no soporta eliminar empresas"
+							disabled
 							on:click={deleteEmpresa}
-							disabled={selectedEmpresa === 0}
-							class:opacity-50={selectedEmpresa === 0}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -818,7 +820,7 @@
 						>
 							<option value={0}>Seleccione...</option>
 							{#each estaciones as item}
-								<option value={item.id}>{item.razon_social}</option>
+								<option value={item.id}>{item.descripcion}</option>
 							{/each}
 						</select>
 					</div>

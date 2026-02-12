@@ -7,9 +7,26 @@
 	import { clientes } from '$lib/stores/clientes';
 	import { dark, modalState, openModal, closeModal, handleModalKeyDown } from '$lib/stores/theme';
 
-	import { obtenerClientes, crearCliente, actualizarCliente } from '$lib/services/cliente2.service';
+	import { obtenerClientes, crearCliente, actualizarCliente } from '$lib/services/clientes.service';
 
 	let listaClientes: Cliente[] = [];
+
+	// Variables de búsqueda
+	let searchNit: string = '';
+	let searchRazonSocial: string = '';
+	let searchGrupo: string = '';
+
+	// Computed property para filtrar clientes
+	$: clientesFiltrados = $clientes.filter((cliente) => {
+		const matchNit =
+			searchNit === '' || cliente.nit.toString().toLowerCase().includes(searchNit.toLowerCase());
+		const matchRazonSocial =
+			searchRazonSocial === '' ||
+			cliente.razon_social.toLowerCase().includes(searchRazonSocial.toLowerCase());
+		const matchGrupo =
+			searchGrupo === '' || cliente.grupo.toLowerCase().includes(searchGrupo.toLowerCase());
+		return matchNit && matchRazonSocial && matchGrupo;
+	});
 
 	let editando = false;
 	let clienteEditId: number | null = null;
@@ -166,16 +183,19 @@
 				<input
 					type="text"
 					placeholder="NIT."
+					bind:value={searchNit}
 					class={`px-2 py-1 rounded-l-md col-span-2 border-r outline-none  ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="Razon Social"
+					bind:value={searchRazonSocial}
 					class={`px-2 py-1 col-span-2 border-r border-l outline-none  ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 				<input
 					type="text"
 					placeholder="Grupo"
+					bind:value={searchGrupo}
 					class={`px-2 py-1 rounded-r-md col-span-2 border-l outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 				/>
 			</div>
@@ -231,7 +251,7 @@
 				</thead>
 
 				<tbody>
-					{#each $clientes as cliente, i}
+					{#each clientesFiltrados as cliente, i}
 						<tr class={`border-b last:border-0 ${$dark ? 'border-gray-600' : 'border-gray-100'}`}>
 							<td class="px-6 py-4">{i + 1}</td>
 							<td class="px-6 py-4">{cliente.nit}</td>
@@ -626,7 +646,9 @@
 						}
           `}
 			>
-				<div class="mb-8 pb-4 border-gray-200 dark:border-gray-700 border-b flex items-center justify-between">
+				<div
+					class="mb-8 pb-4 border-gray-200 dark:border-gray-700 flex items-center justify-between border-b"
+				>
 					<h3 class="text-2xl font-bold tracking-tight">Vehículos del cliente</h3>
 					<button
 						on:click={closeModal}

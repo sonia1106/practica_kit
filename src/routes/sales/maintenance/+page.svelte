@@ -9,19 +9,72 @@
 	let ffin = new Date().toISOString().split('T')[0];
 	let idEstacion = '8';
 
+	// Filter parameters
+	let filterIdVta = '';
+	let filterAutorizacion = '';
+	let filterFactura = '';
+	let filterCliente = '';
+	let filterNit = '';
+	let filterManguera = '';
+	let filterEstado = '';
+
 	// Pagination state
 	let itemsPerPage = 10;
 	let currentPage = 1;
 
+	// Computed filtered data
+	$: filteredMovimientos = $reporteVentas.filter((mov) => {
+		const idVtaMatch =
+			filterIdVta === '' ||
+			mov.id_transaccion?.toString().toLowerCase().includes(filterIdVta.toLowerCase());
+		const autorizacionMatch =
+			filterAutorizacion === '' ||
+			mov.nro_autorizacion?.toString().toLowerCase().includes(filterAutorizacion.toLowerCase());
+		const facturaMatch =
+			filterFactura === '' ||
+			mov.nro_factura?.toString().toLowerCase().includes(filterFactura.toLowerCase());
+		const clienteMatch =
+			filterCliente === '' ||
+			mov.nombre_factura?.toLowerCase().includes(filterCliente.toLowerCase());
+		const nitMatch =
+			filterNit === '' || mov.nit?.toString().toLowerCase().includes(filterNit.toLowerCase());
+		const mangueraMatch =
+			filterManguera === '' ||
+			mov.manguera?.toString().toLowerCase().includes(filterManguera.toLowerCase());
+		const estadoMatch =
+			filterEstado === '' || mov.estado?.toLowerCase().includes(filterEstado.toLowerCase());
+
+		return (
+			idVtaMatch &&
+			autorizacionMatch &&
+			facturaMatch &&
+			clienteMatch &&
+			nitMatch &&
+			mangueraMatch &&
+			estadoMatch
+		);
+	});
+
 	// Computed pagination
-	$: totalPages = Math.ceil($reporteVentas.length / itemsPerPage);
-	$: paginatedMovimientos = $reporteVentas.slice(
+	$: totalPages = Math.ceil(filteredMovimientos.length / itemsPerPage);
+	$: paginatedMovimientos = filteredMovimientos.slice(
 		(currentPage - 1) * itemsPerPage,
 		currentPage * itemsPerPage
 	);
 
 	function changePage(delta: number) {
 		currentPage += delta;
+	}
+
+	function resetFilters() {
+		filterIdVta = '';
+		filterAutorizacion = '';
+		filterFactura = '';
+		filterCliente = '';
+		filterNit = '';
+		filterManguera = '';
+		filterEstado = '';
+		currentPage = 1;
 	}
 
 	async function buscarMovimientos() {
@@ -126,65 +179,82 @@
 			</div>
 		</div>
 
-		<!-- Search / Filter Row Placeholder -->
-		<div class="gap-2 mt-6 pb-6 flex items-center overflow-x-auto">
-			<div class="text-gray-600">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class={`h-6 w-6 ${$dark ? 'text-gray-400' : 'text-gray-600'}`}
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
+		<!-- Search / Filter Row -->
+		<div class="gap-2 mt-6 pb-6 flex flex-col">
+			<div class="gap-2 flex items-center overflow-x-auto">
+				<div class="text-gray-600">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class={`h-6 w-6 ${$dark ? 'text-gray-400' : 'text-gray-600'}`}
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+						/>
+					</svg>
+				</div>
+				<div
+					class={`gap-0 text-xs font-semibold grid w-full min-w-[1000px] rounded-md grid-cols-9 border uppercase
+                    ${$dark ? 'border-gray-600 text-gray-400' : 'border-gray-400 text-gray-500'}
+                `}
 				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+					<input
+						type="text"
+						placeholder="ID.VTA."
+						bind:value={filterIdVta}
+						class={`px-2 py-1 border-r outline-none rounded-l-md ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
 					/>
-				</svg>
+					<input
+						type="text"
+						placeholder="No. Autorización"
+						bind:value={filterAutorizacion}
+						class={`px-2 py-1 col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					/>
+					<input
+						type="text"
+						placeholder="No. Factura"
+						bind:value={filterFactura}
+						class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					/>
+					<input
+						type="text"
+						placeholder="CLIENTE"
+						bind:value={filterCliente}
+						class={`px-2 py-1 col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					/>
+					<input
+						type="text"
+						placeholder="NIT"
+						bind:value={filterNit}
+						class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					/>
+					<input
+						type="text"
+						placeholder="MANG."
+						bind:value={filterManguera}
+						class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
+					/>
+					<input
+						type="text"
+						placeholder="ESTADO"
+						bind:value={filterEstado}
+						class={`px-2 py-1 outline-none rounded-r-md ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
+					/>
+				</div>
 			</div>
-			<div
-				class={`gap-0 text-xs font-semibold grid w-full min-w-[1000px] rounded-md grid-cols-9 border uppercase
-                ${$dark ? 'border-gray-600 text-gray-400' : 'border-gray-400 text-gray-500'}
-            `}
-			>
-				<input
-					type="text"
-					placeholder="ID.VTA."
-					class={`px-2 py-1 border-r outline-none rounded-l-md ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
-				/>
-				<input
-					type="text"
-					placeholder="No. Autorización"
-					class={`px-2 py-1 col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
-				/>
-				<input
-					type="text"
-					placeholder="No. Factura"
-					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
-				/>
-				<input
-					type="text"
-					placeholder="CLIENTE"
-					class={`px-2 py-1 col-span-2 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
-				/>
-				<input
-					type="text"
-					placeholder="NIT"
-					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
-				/>
-				<input
-					type="text"
-					placeholder="MANG."
-					class={`px-2 py-1 border-r outline-none ${$dark ? 'bg-gray-700 border-gray-600 placeholder-gray-500 text-gray-200' : 'bg-white border-gray-300 placeholder-gray-400'}`}
-				/>
-				<input
-					type="text"
-					placeholder="ESTADO"
-					class={`px-2 py-1 outline-none rounded-r-md ${$dark ? 'bg-gray-700 placeholder-gray-500 text-gray-200' : 'bg-white placeholder-gray-400'}`}
-				/>
-			</div>
+			{#if filterIdVta || filterAutorizacion || filterFactura || filterCliente || filterNit || filterManguera || filterEstado}
+				<button
+					on:click={resetFilters}
+					class="text-xs text-amber-500 hover:text-amber-600 font-medium w-fit"
+				>
+					Limpiar filtros
+				</button>
+			{/if}
 		</div>
 
 		<!-- TABLA PRINCIPAL -->

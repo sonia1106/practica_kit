@@ -10,11 +10,14 @@ import type {
     Antena,
     Ciudad,
     Terminal,
+    Equipo,
+    Tanque,
+    Ubicacion,
 } from '$lib/types/structure';
 
-const BASE_URL = 'http://127.0.0.1:30004';
+export type { Ubicacion };
 
-// Parametric IDs
+const BASE_URL = '/backend';
 const PARAM_IDS = {
     EMPRESA: 3,
     CIUDAD: 4,
@@ -59,6 +62,14 @@ export async function obtenerEmpresa(): Promise<Empresa[]> {
     return res.oResultado;
 }
 
+export async function registrarEmpresa(empresa: Empresa): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/EmpresaOperaciones/`, empresa);
+}
+
+export async function eliminarEmpresa(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/EmpresaOperaciones/`, { id, auxInt1: 0 });
+}
+
 // --- Estacion (EE.SS.) ---
 export async function obtenerEstaciones(idEmpresa: number = 10): Promise<Estacion[]> {
     const res = await fetchJson<ApiResponse<Estacion>>(
@@ -74,6 +85,10 @@ export async function obtenerEstacionPorId(id: number): Promise<Estacion> {
 
 export async function registrarEstacion(estacion: Estacion): Promise<ApiResponse<any>> {
     return postJson(`${BASE_URL}/EstacionOperaciones/`, estacion);
+}
+
+export async function eliminarEstacion(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/EstacionOperaciones/`, { id, auxInt1: 0 });
 }
 
 // --- Playa ---
@@ -93,6 +108,10 @@ export async function registrarPlaya(playa: Playa): Promise<ApiResponse<any>> {
     return postJson(`${BASE_URL}/PlayaOperaciones/`, playa);
 }
 
+export async function eliminarPlaya(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/PlayaOperaciones/`, { id, auxInt1: 0 });
+}
+
 // --- Isla ---
 export async function obtenerIslas(idPlaya: number): Promise<Isla[]> {
     const res = await fetchJson<ApiResponse<Isla>>(
@@ -108,6 +127,10 @@ export async function obtenerIslaPorId(id: number): Promise<Isla> {
 
 export async function registrarIsla(isla: Isla): Promise<ApiResponse<any>> {
     return postJson(`${BASE_URL}/PlayaOperaciones/`, isla);
+}
+
+export async function eliminarIsla(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/IslaOperaciones/`, { id, auxInt1: 0 });
 }
 
 // --- Dispenser ---
@@ -127,6 +150,10 @@ export async function registrarDispenser(dispenser: Dispenser): Promise<ApiRespo
     return postJson(`${BASE_URL}/DispensadorOperaciones/`, dispenser);
 }
 
+export async function eliminarDispenser(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/DispensadorOperaciones/`, { id, auxInt1: 0 });
+}
+
 // --- Lado ---
 export async function obtenerLados(idDispenser: number): Promise<Lado[]> {
     const res = await fetchJson<ApiResponse<Lado>>(
@@ -144,6 +171,10 @@ export async function registrarLado(lado: Lado): Promise<ApiResponse<any>> {
     return postJson(`${BASE_URL}/LadoOperaciones/`, lado);
 }
 
+export async function eliminarLado(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/LadoOperaciones/`, { id, auxInt1: 0 });
+}
+
 // --- Manguera ---
 export async function obtenerMangueras(idLado: number): Promise<Manguera[]> {
     const res = await fetchJson<ApiResponse<Manguera>>(
@@ -159,6 +190,10 @@ export async function obtenerMangueraPorId(id: number): Promise<Manguera> {
 
 export async function registrarManguera(manguera: Manguera): Promise<ApiResponse<any>> {
     return postJson(`${BASE_URL}/MangueraOperaciones/`, manguera);
+}
+
+export async function eliminarManguera(id: number): Promise<ApiResponse<any>> {
+    return postJson(`${BASE_URL}/MangueraOperaciones/`, { id, auxInt1: 0 });
 }
 
 // --- Otros ---
@@ -181,3 +216,22 @@ export async function obtenerTerminales(): Promise<Terminal[]> {
     const res = await fetchJson<ApiResponse<Terminal>>(`${BASE_URL}/ParametricaObtener/${PARAM_IDS.TERMINAL}/`);
     return res.oResultado;
 }
+
+export async function obtenerUbicaciones(): Promise<Ubicacion[]> {
+    // Assuming ubicaciones use a parametric ID. Adjust if needed.
+    const res = await fetchJson<ApiResponse<Ubicacion>>(`${BASE_URL}/ParametricaObtener/10/`);
+    return res.oResultado;
+}
+
+export async function obtenerEquipos(): Promise<Equipo[]> {
+    // Assuming equipos use a parametric ID. Adjust if needed.
+    const res = await fetchJson<ApiResponse<Equipo>>(`${BASE_URL}/ParametricaObtener/14/`);
+    return res.oResultado;
+}
+
+export async function obtenerTanques(): Promise<Tanque[]> {
+    // Assuming tanques use a parametric ID. Adjust if needed.
+    const res = await fetchJson<ApiResponse<Tanque>>(`${BASE_URL}/ParametricaObtener/15/`);
+    return res.oResultado;
+}
+
