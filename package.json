@@ -41,6 +41,7 @@
 	},
 	"dependencies": {
 		"jspdf": "^4.0.0",
-		"jspdf-autotable": "^5.0.7"
+		"jspdf-autotable": "^5.0.7",
+		"node-thermal-printer": "^4.6.0"
 	}
 }

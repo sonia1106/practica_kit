@@ -18,6 +18,41 @@
 			console.error('Error loading prices:', e);
 		}
 	});
+
+	async function imprimirTicketPrueba() {
+		const testData = {
+			usuario: '11102 (Prueba)',
+			bomba: '2',
+			fecha: new Date().toLocaleString(),
+			detalles: [
+				{ manguera: '1B-GE-PLUS', volumen: 446.39, bs: 3107.04 },
+				{ manguera: '2B-GE-PLUS', volumen: 144.05, bs: 1002.53 },
+				{ manguera: '2A-GE-PLUS', volumen: 9.29, bs: 64.64 }
+			],
+			total: 4174.21,
+			pagos: [
+				{ descripcion: 'CODIGO QR', total: 562.57 },
+				{ descripcion: 'EFECTIVO', total: 3611.64 }
+			],
+			totalRecaudado: 4174.21
+		};
+
+		try {
+			const res = await fetch('/api/print', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ data: testData })
+			});
+			const result = await res.json();
+			if (result.success) {
+				alert('Ticket enviado a la impresora');
+			} else {
+				alert('Error: ' + result.message);
+			}
+		} catch (err) {
+			alert('Error de conexión con la API');
+		}
+	}
 </script>
 
 <section
@@ -51,11 +86,19 @@
 	>
 		<div class="mb-4 -mt-2 flex items-center justify-between">
 			<h3 class="text-md font-medium">Lista de Precios</h3>
-			<button
-				class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-			>
-				Actualizar Precios
-			</button>
+			<div class="flex gap-2">
+				<button
+					on:click={imprimirTicketPrueba}
+					class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+				>
+					<span>🖨️</span> Probar Impresora
+				</button>
+				<button
+					class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+				>
+					Actualizar Precios
+				</button>
+			</div>
 		</div>
 
 		{#if loading}

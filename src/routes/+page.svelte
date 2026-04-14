@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	// Using MOCK service for local development (no backend API needed)
 	import { login } from '$lib/services/auth.service';
 	import { dark } from '$lib/stores/theme';
 
@@ -116,7 +115,7 @@
 						id="clave"
 						bind:value={clave}
 						type="password"
-						placeholder="••••••••"
+						placeholder=""
 						required
 						disabled={loading}
 						class={`px-4 py-3 rounded-lg w-full border transition-all duration-200 focus:ring-2 focus:outline-none ${

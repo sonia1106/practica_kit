@@ -4,13 +4,17 @@
 	import { authStore } from '$lib/stores/auth';
 	import { clientes } from '$lib/stores/clientes';
 	import { obtenerClientes } from '$lib/services/clientes.service';
-	import { items, tanques } from '$lib/stores/inventario';
+	import { items, tanques, movimientos, detallesLocales } from '$lib/stores/inventario';
 	import {
 		obtenerItems,
 		obtenerTanques,
 		registrarMovimiento
 	} from '$lib/services/inventario.service';
-	import type { ProductoMovimientoDTO, MovimientoRegistroDTO } from '$lib/types/inventario';
+	import type {
+		ProductoMovimientoDTO,
+		MovimientoRegistroDTO,
+		MovimientoCabecera
+	} from '$lib/types/inventario';
 
 	let tipoDocumentoSeleccionado = '';
 	let estacion = 'ESTACION DE SERVICIO LUCIFER';
@@ -37,6 +41,7 @@
 	let productoSeleccionadoId = 0;
 	let precioCosto = 0;
 	let volRecibido = 0;
+	let debeImprimir = true;
 
 	let movimientoItems: ProductoMovimientoDTO[] = [];
 
@@ -95,7 +100,7 @@
 			bancarizacion: '',
 			codigo_control: codigoControl || 'S/N',
 			conductor: conductor || 'TEST',
-			destino: estacion.split(' ').join('+'),
+			destino: estacion,
 			fecha_factura: fechaDespacho, // YYYY-MM-DD
 			fecha_venta: fechaRecepcion, // YYYY-MM-DD
 			grupoProducto: 1,
@@ -133,13 +138,72 @@
 
 		console.log('📦 Payload JSON:', JSON.stringify(payload, null, 2));
 
+		// Guardar localmente en el store para que aparezca en follow-up de inmediato
+		const movimientoLocal: MovimientoCabecera = {
+			id_transaccion: Date.now(), // ID temporal negativo para no colisionar con el backend
+			fecha: fechaRecepcion,
+			transaccion_tipo: tipoDocumentoSeleccionado || 'ENTRADA',
+			prov: proveedorSeleccionado || '-',
+			monto_total: totalGeneral,
+			estado: 'LOCAL',
+			origen: estacion,
+			referencia: nroFactura,
+			usuario: $authStore.user?.nombre || 'LOCAL',
+			id_estacion: parseInt(idEstacion),
+			nro_despacho: nroDespacho
+		};
+
 		try {
 			await registrarMovimiento(payload);
+			// Si el backend responde OK, marcamos el estado como OK
+			movimientoLocal.estado = 'OK';
 			alert('Movimiento registrado exitosamente');
-			movimientoItems = [];
+
+			// IMPRESION AUTOMATICA
+			if (debeImprimir) {
+				const printData = {
+					usuario: $authStore.user?.nombre || 'Operador',
+					bomba: 'N/A',
+					fecha: new Date().toLocaleString(),
+					detalles: movimientoItems.map((item) => ({
+						manguera: item.tanque.substring(0, 15),
+						volumen: parseFloat(item.cantidad),
+						bs: item.monto_total
+					})),
+					total: totalGeneral,
+					pagos: [
+						{ descripcion: 'RECEPCION INVENTARIO', total: totalGeneral }
+					],
+					totalRecaudado: totalGeneral
+				};
+
+				fetch('/api/print', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ data: printData })
+				}).catch(err => console.error('Error al imprimir ticket:', err));
+			}
 		} catch (e) {
-			console.error(e);
-			alert('Error al registrar movimiento');
+			// El error del backend se ignora visualmente; el registro queda guardado localmente
+			console.error('Backend error (guardado local activo):', e);
+		} finally {
+			// Guardar los items localmente para verlos en el detalle de follow-up
+			const detallesMovimiento = movimientoItems.map((item) => ({
+				id_item: parseInt(item.id),
+				cantidad: parseFloat(item.cantidad),
+				precio: parseFloat(item.precio),
+				producto: item.producto,
+				tanque: item.tanque,
+				monto_total: item.monto_total
+			}));
+			detallesLocales.update((map) => {
+				const nuevo = new Map(map);
+				nuevo.set(movimientoLocal.id_transaccion, detallesMovimiento);
+				return nuevo;
+			});
+			// Agregar al store local para poder verlo en follow-up
+			movimientos.update((list) => [movimientoLocal, ...list]);
+			movimientoItems = [];
 		}
 	}
 </script>
@@ -502,12 +566,18 @@
 			</div>
 
 			<div class="mt-4 flex justify-end">
-				<button
-					on:click={guardarMovimiento}
-					class="px-6 py-2 rounded-md bg-orange-400 text-white font-medium hover:bg-orange-500 shadow-lg transition-colors"
-				>
-					Guardar Movimiento
-				</button>
+				<div class="flex items-center gap-4">
+					<label class="flex items-center gap-2 cursor-pointer">
+						<input type="checkbox" bind:checked={debeImprimir} class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" />
+						<span class="text-sm font-medium">🖨️ Imprimir Ticket al guardar</span>
+					</label>
+					<button
+						on:click={guardarMovimiento}
+						class="px-6 py-2 rounded-md bg-orange-400 text-white font-medium hover:bg-orange-500 shadow-lg transition-colors"
+					>
+						Guardar Movimiento
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -118,7 +118,7 @@
 <svelte:window on:keydown={handleModalKeyDown} />
 <section
 	class={`
-      p-4 md:p-6 h-full w-full
+      p-4 md:p-6 w-full
       ${$dark ? 'bg-gray-900 text-gray-200' : 'bg-white text-gray-700'}
     `}
 >
@@ -518,47 +518,25 @@
 							</select>
 						</div>
 
-						<!-- Tarjetas -->
-						<div>
+						<!-- Contacto -->
+						<div class="md:col-span-2">
 							<label
-								for="tarjetas"
+								for="contacto"
 								class={`mb-1 text-xs font-medium block uppercase
                 ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
 							>
-								Tarjetas
+								Contacto
 							</label>
 							<input
-								id="tarjetas"
-								type="number"
-								bind:value={form.contacto}
-								class={`rounded-md px-3 py-2 text-sm w-full border
-                  ${
-										$dark
-											? 'bg-gray-900 border-gray-700 text-gray-200'
-											: 'bg-white border-gray-300 text-gray-700'
-									}
-                `}
-							/>
-						</div>
-
-						<!-- Vehículos -->
-						<div>
-							<label
-								for="vehiculos"
-								class={`mb-1 text-xs font-medium block uppercase
-                ${$dark ? 'text-gray-400' : 'text-gray-500'}`}
-							>
-								Vehículos
-							</label>
-							<input
-								id="vehiculos"
+								id="contacto"
 								type="text"
 								bind:value={form.contacto}
 								class={`rounded-md px-3 py-2 text-sm w-full border
+                  focus:ring-2 focus:outline-none
                   ${
 										$dark
-											? 'bg-gray-900 border-gray-700 text-gray-200'
-											: 'bg-white border-gray-300 text-gray-700'
+											? 'bg-gray-900 border-gray-700 text-gray-200 focus:ring-blue-500'
+											: 'bg-white border-gray-300 text-gray-700 focus:ring-blue-500'
 									}
                 `}
 							/>
@@ -685,9 +663,9 @@
                       ${$dark ? 'border-gray-700' : 'border-gray-200'}
                     `}
 							>
-								<td class="px-4 py-2"></td>
-								<td class="px-4 py-2 font-medium">No disponible</td>
-								<td class="px-4 py-2">No disponible</td>
+								<td class="px-4 py-2">1</td>
+								<td class="px-4 py-2 font-medium">{$modalState.data.contacto || 'Sin datos'}</td>
+								<td class="px-4 py-2 text-xs opacity-60">—</td>
 								<td class="px-4 py-2"></td>
 							</tr>
 						</tbody>
@@ -780,8 +758,8 @@
 
 						<!-- Texto -->
 						<div>
-							<p class="text-sm font-medium">tarjetas</p>
-							<p class="text-xl font-semibold">No disponible</p>
+							<p class="text-sm font-medium">Contacto / Tarjeta</p>
+							<p class="text-xl font-semibold">{$modalState.data.contacto || 'Sin datos'}</p>
 						</div>
 					</div>
 				</div>

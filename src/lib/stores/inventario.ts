@@ -5,6 +5,8 @@ export const items = writable<Item[]>([]);
 export const tanques = writable<Tanque[]>([]);
 export const movimientos = writable<MovimientoCabecera[]>([]);
 export const movimientoSeleccionadoDetalle = writable<MovimientoDetalle[]>([]);
+// Mapa de detalles para movimientos guardados localmente: id_transaccion -> detalles
+export const detallesLocales = writable<Map<number, MovimientoDetalle[]>>(new Map());
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';

@@ -6,7 +6,6 @@ const initialState: AuthStore = {
     isAuthenticated: false
 };
 
-// Initialize from localStorage if available
 if (typeof window !== 'undefined') {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {

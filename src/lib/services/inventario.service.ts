@@ -1,99 +1,101 @@
 import type { Item, Tanque, MovimientoRegistroDTO, MovimientoCabecera, MovimientoDetalle } from '$lib/types/inventario';
-import { items, tanques, movimientos, movimientoSeleccionadoDetalle } from '$lib/stores/inventario';
-import { http } from '$lib/utils/http';
+import { items, tanques, movimientos, movimientoSeleccionadoDetalle, detallesLocales } from '$lib/stores/inventario';
 
-interface ApiResponse<T> {
-    IntCodigo: number;
-    oResultado: T;
-    StrMensaje: string;
-}
+// --- MOCK DATA ---
+const MOCK_ITEMS: Item[] = [
+    {
+        id_item: 11,
+        descripcion: 'DIESEL ULS',
+        descripcion_mini: 'DOULS',
+        unidad_manejo: 'LIT',
+        proveedor: 'YACIMIENTOS PETROLIFEROS FISCALES BOLIVIANOS',
+        gfactura: 'COMBUSTIBLE',
+        aud_estado: 2,
+        factor_conversion1: 1,
+        factor_conversion2: 0,
+        habilitacion1: 622919,
+        habilitacion2: 1,
+        habilitacion3: 0,
+        id_grupo_product_fact: 1,
+        id_proveedor: 1
+    },
+    {
+        id_item: 1,
+        descripcion: 'GNV',
+        descripcion_mini: 'GNV',
+        unidad_manejo: 'LIT',
+        proveedor: 'YACIMIENTOS PETROLIFEROS FISCALES BOLIVIANOS',
+        gfactura: 'COMBUSTIBLE',
+        aud_estado: 1,
+        factor_conversion1: 1,
+        factor_conversion2: 0,
+        habilitacion1: 622919,
+        habilitacion2: 1,
+        habilitacion3: 0,
+        id_grupo_product_fact: 1,
+        id_proveedor: 1
+    },
+    {
+        id_item: 7,
+        descripcion: 'G.ESPECIAL+',
+        descripcion_mini: 'G+',
+        unidad_manejo: 'LIT',
+        proveedor: 'YACIMIENTOS PETROLIFEROS FISCALES BOLIVIANOS',
+        gfactura: 'COMBUSTIBLE',
+        aud_estado: 2,
+        factor_conversion1: 1,
+        factor_conversion2: 0,
+        habilitacion1: 622919,
+        habilitacion2: 1,
+        habilitacion3: 0,
+        id_grupo_product_fact: 1,
+        id_proveedor: 1
+    }
+];
 
-interface ApiMovimientosResponse {
-    IntCodigo: number;
-    oResultado: MovimientoCabecera[];
-    oResultadoDet: any[];
-    StrMensaje: string;
-}
+const MOCK_TANQUES: Tanque[] = [
+    { id_tanques: 1, descripcion: 'TANQUE GAS NATURAL VEHICULAR', id_item: 1, aud_estado: 1, aud_fecha: '', capacidad: 10000, existencia_minima: 1000, factor_conversion1: 1, med_fecha: '', medicion_agua: 0, medicion_fecha: '', medicion_id: 1, medicion_temperatura: 20, medicion_volumen: 5000 },
+    { id_tanques: 3, descripcion: 'TQ-GE01 (G.ESPECIAL+)', id_item: 7, aud_estado: 1, aud_fecha: '', capacidad: 15000, existencia_minima: 2000, factor_conversion1: 1, med_fecha: '', medicion_agua: 0, medicion_fecha: '', medicion_id: 3, medicion_temperatura: 20, medicion_volumen: 8000 },
+    { id_tanques: 4, descripcion: 'TQ-DO01 (DIESEL)', id_item: 11, aud_estado: 1, aud_fecha: '', capacidad: 20000, existencia_minima: 3000, factor_conversion1: 1, med_fecha: '', medicion_agua: 0, medicion_fecha: '', medicion_id: 4, medicion_temperatura: 20, medicion_volumen: 12000 }
+];
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function obtenerItems() {
-    try {
-        const data = await http<ApiResponse<Item[]>>(
-            '/ItemObtener/0/1'
-        );
-        items.set(data.oResultado || []);
-    } catch (error) {
-        console.error('Error obteniendo items:', error);
-        items.set([]);
-    }
+    await delay(500);
+    items.set(MOCK_ITEMS);
 }
 
 export async function obtenerTanques(idEstacion: string) {
-    try {
-        const data = await http<ApiResponse<Tanque[]>>(
-            `/TanqueObtener/0/${idEstacion}/`
-        );
-        tanques.set(data.oResultado || []);
-    } catch (error) {
-        console.error('Error obteniendo tanques:', error);
-        tanques.set([]);
-    }
+    await delay(500);
+    // Filtrar tanques si fuera necesario, para el mock devolvemos todos
+    tanques.set(MOCK_TANQUES);
 }
 
 export async function registrarMovimiento(payload: MovimientoRegistroDTO): Promise<void> {
-    console.log('📝 Intentando registrar movimiento en /MovimientoRegistro/');
-    console.log('📦 Payload:', payload);
-
-    try {
-        await http('/MovimientoRegistro/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-        console.log('✅ Registro exitoso');
-    } catch (error) {
-        console.error('❌ Error en registrarMovimiento:', error);
-        throw error;
-    }
+    console.log('📝 [MOCK] Registrando movimiento local:', payload);
+    await delay(800);
+    // En modo local, el registro ya se maneja en el componente guardando en el store 'movimientos'
 }
 
 export async function obtenerMovimientosCabecera(ffini: string, ffin: string, idEstacion: string) {
-    const formData = new FormData();
-    formData.append('ffini', ffini);
-    formData.append('ffin', ffin);
-    formData.append('tipo_consulta', '1');
-    formData.append('id_estacion', idEstacion);
-
-    try {
-        const data = await http<ApiMovimientosResponse>('/MovimientoObtenerCabecera/', {
-            method: 'POST',
-            body: formData
-        });
-
-        movimientos.set(data.oResultado || []);
-    } catch (error) {
-        console.error('Error obteniendo movimientos:', error);
-        movimientos.set([]);
-    }
+    await delay(500);
+    // Mantenemos los movimientos locales que ya existan en el store
+    movimientos.update((current) => {
+        return current.filter((m) => m.estado === 'LOCAL' || m.estado === 'OK');
+    });
 }
 
 export async function obtenerMovimientoDetalle(idTransaccion: number) {
-    const formData = new FormData();
-    formData.append('id_transaccion', idTransaccion.toString());
+    // Primero verificar si hay detalles guardados localmente
+    let detallesLocal: MovimientoDetalle[] | undefined;
+    detallesLocales.subscribe((map: Map<number, MovimientoDetalle[]>) => { detallesLocal = map.get(idTransaccion); })();
 
-    try {
-        // Usamos any para la respuesta del detalle si no tenemos interfaz estricta
-        const data = await http<any>('/MovimientoObtenerDetalle/', {
-            method: 'POST',
-            body: formData
-        });
-
-        const detalles = data.oResultado || [];
-        movimientoSeleccionadoDetalle.set(detalles);
-        return detalles;
-    } catch (error) {
-        console.error('Error obteniendo detalle:', error);
-        return [];
+    if (detallesLocal && detallesLocal.length > 0) {
+        movimientoSeleccionadoDetalle.set(detallesLocal);
+        return detallesLocal;
     }
+
+    await delay(300);
+    return [];
 }
